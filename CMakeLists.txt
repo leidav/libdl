@@ -3,14 +3,32 @@ project(libdl VERSION 0.1
 		DESCRIPTION "Deeplearning Library"
         LANGUAGES CXX)
 
-
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the build type" FORCE)
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
 		         "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+
+find_package(Git QUIET)
+if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+	    message(STATUS "update submodules")
+		execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+			            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+						RESULT_VARIABLE GIT_SUBMOD_RESULT)
+		if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+			message(FATAL_ERROR "could not fetch git submodules")
+		endif()
+endif()
+
 find_package(OpenMP REQUIRED)
 
+add_subdirectory(extern/eigen)
+add_subdirectory(extern/spdlog)
+add_subdirectory(extern/pybind11)
 add_subdirectory(src)
+
+add_subdirectory(extern/Catch2)
+add_subdirectory(tests)
+
 
