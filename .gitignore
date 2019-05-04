@@ -1,1 +1,11 @@
+*.[oa]
+
+*.swp
+*.user
+*~
+
 build/
+CmakeFiles
+CMakeCache.txt
+tags
+data/*

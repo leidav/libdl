@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 3.9)
-project(test VERSION 0.1
-        DESCRIPTION "testing CI setup"
+project(libdl VERSION 0.1
+		DESCRIPTION "Deeplearning Library"
         LANGUAGES CXX)
 
-set(TEST_TARGET testmain)
 
-add_executable(${TEST_TARGET} main.cpp)
-target_compile_features(${TEST_TARGET} PUBLIC cxx_std_17)
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the build type" FORCE)
+	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+		         "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+add_subdirectory(src)
 
