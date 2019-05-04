@@ -10,5 +10,7 @@ if(NOT CMAKE_BUILD_TYPE)
 		         "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+find_package(OpenMP REQUIRED)
+
 add_subdirectory(src)
 
