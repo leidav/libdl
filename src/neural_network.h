@@ -14,7 +14,7 @@ class NeuralNetwork {
 
   void addLayer(Layer *layer);
 
-  void forward(const Layer::Array &x, Layer::Array &y);
+  void forward(const Layer::Array &x);
 
   void backward();
 

@@ -2,11 +2,10 @@
 
 namespace nn {
 
-ReLULayer::ReLULayer(int layer_size) : m_layer_size(layer_size) {}
+ReLULayer::ReLULayer(int batch_size, int input_size, int output_size)
+    : Layer(batch_size, input_size, output_size) {}
+
 ReLULayer::~ReLULayer() {}
 
-void ReLULayer::forward(const Layer::Array &x, Layer::Array &y) {
-  y = x.max(0);
-}
-
+void ReLULayer::forward(const Layer::Array& x) { m_y = x.max(0); }
 };  // namespace nn

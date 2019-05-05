@@ -8,16 +8,14 @@ class FullyConnectedLayer : public Layer {
   using WeightArray =
 	  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>;
 
-  FullyConnectedLayer(int input_size, int output_size);
+  FullyConnectedLayer(int batch_size, int input_size, int output_size);
   virtual ~FullyConnectedLayer();
 
-  void forward(const Array &x, Array &y) final;
+  void forward(const Array &x) final;
 
   // void backward() final;
 
  private:
-  int m_input_size;
-  int m_output_size;
   WeightArray m_weights;
 };
 };  // namespace nn

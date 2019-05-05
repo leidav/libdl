@@ -6,15 +6,12 @@
 namespace nn {
 class ReLULayer : public Layer {
  public:
-  ReLULayer(int layer_size);
+  ReLULayer(int batch_size, int input_size, int output_size);
   virtual ~ReLULayer();
 
-  void forward(const Array &x, Array &y) final;
+  void forward(const Array &x) final;
 
   // void backward() final;
-
- private:
-  int m_layer_size;
 };
 };  // namespace nn
 

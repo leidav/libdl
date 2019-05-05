@@ -6,10 +6,10 @@
 namespace nn {
 class CrossEntropyLayer : public Layer {
  public:
-  CrossEntropyLayer(int layer_size);
+  CrossEntropyLayer(int batch_size, int input_size, int output_size);
   virtual ~CrossEntropyLayer();
 
-  void forward(const Array &x, Array &y) final;
+  void forward(const Array &x) final;
 
   // void backward() final;
 

@@ -8,6 +8,8 @@ target_sources(dl PUBLIC
 						"${CMAKE_CURRENT_SOURCE_DIR}/fully_connected_layer.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/relu_layer.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/relu_layer.cpp"
+						"${CMAKE_CURRENT_SOURCE_DIR}/sigmoid_layer.h"
+						"${CMAKE_CURRENT_SOURCE_DIR}/sigmoid_layer.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/cross_entropy_layer.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/cross_entropy_layer.cpp")
 
