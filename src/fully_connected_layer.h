@@ -5,7 +5,7 @@
 namespace nn {
 class FullyConnectedLayer : public Layer {
  public:
-  using WeightArray =
+  using WeightMatrix =
 	  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>;
 
   FullyConnectedLayer(int batch_size, int input_size, int output_size);
@@ -16,7 +16,7 @@ class FullyConnectedLayer : public Layer {
   // void backward() final;
 
  private:
-  WeightArray m_weights;
+  WeightMatrix m_weights;
 };
 };  // namespace nn
 

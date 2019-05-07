@@ -6,7 +6,7 @@
 namespace nn {
 class ReLULayer : public Layer {
  public:
-  ReLULayer(int batch_size, int input_size, int output_size);
+  ReLULayer(int batch_size, int layer_size);
   virtual ~ReLULayer();
 
   void forward(const Array &x) final;

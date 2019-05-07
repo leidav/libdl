@@ -2,8 +2,8 @@
 
 namespace nn {
 
-ReLULayer::ReLULayer(int batch_size, int input_size, int output_size)
-    : Layer(batch_size, input_size, output_size) {}
+ReLULayer::ReLULayer(int batch_size, int layer_size)
+    : Layer(batch_size, layer_size, layer_size) {}
 
 ReLULayer::~ReLULayer() {}
 

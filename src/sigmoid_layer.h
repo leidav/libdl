@@ -6,7 +6,7 @@
 namespace nn {
 class SigmoidLayer : public Layer {
  public:
-  SigmoidLayer(int batch_size, int input_size, int output_size);
+  SigmoidLayer(int batch_size, int layer_size);
   virtual ~SigmoidLayer();
 
   void forward(const Array &x) final;

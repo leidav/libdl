@@ -4,17 +4,19 @@
 #include "layer.h"
 
 namespace nn {
-class CrossEntropyLayer : public Layer {
+class SoftmaxLayer : public OutputLayer {
  public:
-  CrossEntropyLayer(int batch_size, int input_size, int output_size);
-  virtual ~CrossEntropyLayer();
+  SoftmaxLayer(int batch_size, int layer_size);
+  virtual ~SoftmaxLayer();
 
   void forward(const Array &x) final;
 
   // void backward() final;
+  float loss(const Eigen::VectorXi &labels) final;
 
  private:
   int m_layer_size;
+  float m_loss;
 };
 };  // namespace nn
 
