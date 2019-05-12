@@ -17,6 +17,8 @@ int Layer::inputSize() { return m_input_size; }
 
 int Layer::outputSize() { return m_output_size; }
 
+float Layer::regularizationLoss() { return 0; }
+
 OutputLayer::OutputLayer(int batch_size, int input_size, int output_size)
     : Layer(batch_size, input_size, output_size) {}
 

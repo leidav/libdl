@@ -15,7 +15,7 @@ TEST_CASE("Fully Connected Layer", "[FCL]") {
   nn::Layer::Array expected_y(2, 3);
   expected_y << 2, 3, 4, 6, 7, 8;
 
-  nn::FullyConnectedLayer fcl(2, 4, 3);
+  nn::FullyConnectedLayer fcl(2, 4, 3, 1e-6f);
   fcl.forward(x);
   const nn::Layer::Array& y = fcl.y();
   REQUIRE(y.rows() == 2);
@@ -50,12 +50,14 @@ TEST_CASE("ReLU Layer", "[ReLU]") {
 
 TEST_CASE("Neural Network", "[NN]") {
   nn::NeuralNetwork net;
-  net.addHiddenLayer(std::make_unique<nn::FullyConnectedLayer>(32, 100, 200));
-  net.addHiddenLayer(std::make_unique<nn::SigmoidLayer>(32, 200));
-  net.addHiddenLayer(std::make_unique<nn::FullyConnectedLayer>(32, 200, 100));
-  net.addHiddenLayer(std::make_unique<nn::SigmoidLayer>(32, 100));
-  net.addHiddenLayer(std::make_unique<nn::FullyConnectedLayer>(32, 100, 10));
-  net.addHiddenLayer(std::make_unique<nn::SigmoidLayer>(32, 10));
+  net.addHiddenLayer(
+      std::make_unique<nn::FullyConnectedLayer>(32, 100, 200, 1e-6f));
+  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(32, 200));
+  net.addHiddenLayer(
+      std::make_unique<nn::FullyConnectedLayer>(32, 200, 100, 1e-6f));
+  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(32, 100));
+  net.addHiddenLayer(
+      std::make_unique<nn::FullyConnectedLayer>(32, 100, 10, 1e-6f));
   net.addOutputLayer(std::make_unique<nn::SoftmaxLayer>(32, 10));
 
   nn::Layer::Array a = nn::Layer::Array::Random(32, 100);

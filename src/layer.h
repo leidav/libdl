@@ -19,6 +19,8 @@ class Layer {
 
   virtual void backward(const Array& x, const Array& dy) = 0;
 
+  virtual float regularizationLoss();
+
  protected:
   int m_batch_size;
   int m_input_size;
