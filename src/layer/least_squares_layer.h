@@ -4,14 +4,14 @@
 #include "layer.h"
 
 namespace nn {
-class SoftmaxLayer : public OutputLayer {
+class LeastSquaresLayer : public OutputLayer {
  public:
-  SoftmaxLayer(int batch_size, int layer_size);
-  virtual ~SoftmaxLayer();
+  LeastSquaresLayer(int batch_size, int layer_size);
+  virtual ~LeastSquaresLayer();
 
   void forward(const Array& x) final;
 
-  float loss(const Eigen::VectorXf& labels) final;
+  float loss(const Eigen::VectorXf& ground_truth) final;
 
  private:
   int m_layer_size;

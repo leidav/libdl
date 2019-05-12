@@ -1,6 +1,5 @@
 #include "softmax_layer.h"
 #include <cmath>
-#include <iostream>
 #include <limits>
 
 namespace nn {
@@ -22,10 +21,10 @@ void SoftmaxLayer::forward(const Layer::Array& x) {
   }
 }
 
-float SoftmaxLayer::loss(const std::vector<int>& labels) {
+float SoftmaxLayer::loss(const Eigen::VectorXf& labels) {
   float loss_sum = 0;
   for (int i = 0; i < m_batch_size; i++) {
-	int label_pos = labels[static_cast<size_t>(i)];
+	int label_pos = static_cast<int>(labels(i));
 	loss_sum += logf(m_y(i, label_pos));
 	// gradient
 	m_dx.row(i) = m_y.row(i);

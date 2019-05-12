@@ -25,9 +25,9 @@ void NeuralNetwork::addOutputLayer(std::unique_ptr<OutputLayer> output_layer) {
   m_output_layer = std::move(output_layer);
 }
 
-float NeuralNetwork::forward(const Layer::Array &x,
-                             const std::vector<int> &labels) {
-  const Layer::Array *xi = &x;
+float NeuralNetwork::forward(const Layer::Array &input,
+                             const Layer::Array &ground_truth) {
+  const Layer::Array *xi = &input;
   float loss = 0;
   for (auto &layer : m_hidden_layer) {
 	layer->forward(*xi);
@@ -36,7 +36,7 @@ float NeuralNetwork::forward(const Layer::Array &x,
   }
   m_output_layer->forward(*xi);
   loss += m_output_layer->regularizationLoss();
-  return m_output_layer->loss(labels) + loss;
+  return m_output_layer->loss(ground_truth) + loss;
 }
 
 void NeuralNetwork::backward(const Layer::Array &x) {

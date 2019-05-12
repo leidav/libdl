@@ -61,10 +61,10 @@ TEST_CASE("Neural Network", "[NN]") {
   net.addOutputLayer(std::make_unique<nn::SoftmaxLayer>(32, 10));
 
   nn::Layer::Array a = nn::Layer::Array::Random(32, 100);
-  std::vector<int> labels = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3,
-                             4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7,
-                             8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-  float loss = net.forward(a, labels);
+  Eigen::VectorXf labels(40);
+  labels << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2,
+      3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  float loss = net.forward(a, nn::Layer::Array(labels));
   net.backward(a);
   const nn::Layer::Array& y = net.y();
   REQUIRE(y.rows() == 32);
