@@ -4,7 +4,8 @@
 #include <memory>
 #include <vector>
 
-#include "layer.h"
+#include "layer/layer.h"
+
 namespace nn {
 class NeuralNetwork {
  public:

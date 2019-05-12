@@ -3,11 +3,11 @@
 #include <catch2/catch.hpp>
 #include <memory>
 
-#include <fully_connected_layer.h>
+#include <layer/fully_connected_layer.h>
+#include <layer/relu_layer.h>
+#include <layer/sigmoid_layer.h>
+#include <layer/softmax_layer.h>
 #include <neural_network.h>
-#include <relu_layer.h>
-#include <sigmoid_layer.h>
-#include <softmax_layer.h>
 
 TEST_CASE("Fully Connected Layer", "[FCL]") {
   nn::Layer::Array x(2, 4);
