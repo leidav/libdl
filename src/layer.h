@@ -1,7 +1,7 @@
 #ifndef LAYER_H
 #define LAYER_H
 
-#include <Eigen>
+#include <Eigen/Core>
 
 namespace nn {
 class Layer {
@@ -13,15 +13,18 @@ class Layer {
 
   virtual void forward(const Array& x) = 0;
   const Array& y();
+  const Array& dx();
   int inputSize();
   int outputSize();
 
-  // virtual void backward() = 0;
+  virtual void backward(const Array& x, const Array& dy) = 0;
+
  protected:
   int m_batch_size;
   int m_input_size;
   int m_output_size;
   Array m_y;
+  Array m_dx;
 };
 
 class OutputLayer : public Layer {
@@ -31,7 +34,9 @@ class OutputLayer : public Layer {
 
   virtual void forward(const Array& x) = 0;
 
-  virtual float loss(const Eigen::VectorXi& labels) = 0;
+  void backward(const Array& x, const Array& dy) final;
+
+  virtual float loss(const std::vector<int>& labels) = 0;
 };
 };  // namespace nn
 

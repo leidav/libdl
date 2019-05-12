@@ -1,5 +1,6 @@
 #include "neural_network.h"
 #include <spdlog/spdlog.h>
+
 namespace nn {
 
 NeuralNetwork::NeuralNetwork() {}
@@ -24,19 +25,29 @@ void NeuralNetwork::addOutputLayer(std::unique_ptr<OutputLayer> output_layer) {
   m_output_layer = std::move(output_layer);
 }
 
-void NeuralNetwork::forward(const Layer::Array &x) {
+float NeuralNetwork::forward(const Layer::Array &x,
+                             const std::vector<int> &labels) {
   const Layer::Array *xi = &x;
   for (auto &layer : m_hidden_layer) {
 	layer->forward(*xi);
 	xi = &layer->y();
   }
   m_output_layer->forward(*xi);
+  return m_output_layer->loss(labels);
 }
 
-void NeuralNetwork::backward() {}
-
-float NeuralNetwork::loss(const Eigen::VectorXi &labels) {
-  return m_output_layer->loss(labels);
+void NeuralNetwork::backward(const Layer::Array &x) {
+  const Layer::Array *dyi = &m_output_layer->dx();
+  for (auto i = m_hidden_layer.rbegin(); i != m_hidden_layer.rend() - 1; i++) {
+	auto layer = i->get();
+	auto next_layer = (i + 1)->get();
+	const Layer::Array *dxi = &next_layer->y();
+	layer->backward(*dxi, *dyi);
+	dyi = &layer->dx();
+  }
+  if (m_hidden_layer.size() > 0) {
+	m_hidden_layer[0]->backward(x, *dyi);
+  }
 }
 
 const Layer::Array &NeuralNetwork::y() { return m_output_layer->y(); }

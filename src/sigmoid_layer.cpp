@@ -13,6 +13,11 @@ SigmoidLayer::~SigmoidLayer() {}
 void SigmoidLayer::forward(const Layer::Array& x) {
   // m_y = x.unaryExpr(std::ptr_fun(sigmoid));
   // vectorizable
-  m_y = ((x * -1).exp()).inverse();
+  m_y = ((x * -1.0f).exp() + 1.0f).inverse();
 }
+
+void SigmoidLayer::backward(const Array& x, const Layer::Array& dy) {
+  m_dx = (m_y * (1 - m_y)) * dy;
+}
+
 };  // namespace nn

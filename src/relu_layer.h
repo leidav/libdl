@@ -11,7 +11,7 @@ class ReLULayer : public Layer {
 
   void forward(const Array &x) final;
 
-  // void backward() final;
+  void backward(const Array &x, const Array &dy) final;
 };
 };  // namespace nn
 

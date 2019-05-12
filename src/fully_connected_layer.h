@@ -13,10 +13,13 @@ class FullyConnectedLayer : public Layer {
 
   void forward(const Array &x) final;
 
-  // void backward() final;
+  void backward(const Array &x, const Array &dy) final;
 
  private:
   WeightMatrix m_weights;
+  Eigen::VectorXf m_bias_weights;
+  WeightMatrix m_dw;
+  Eigen::VectorXf m_db;
 };
 };  // namespace nn
 
