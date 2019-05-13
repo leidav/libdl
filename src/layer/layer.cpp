@@ -19,6 +19,8 @@ int Layer::outputSize() { return m_output_size; }
 
 float Layer::regularizationLoss() { return 0; }
 
+void Layer::update(float learning_rate) {}
+
 OutputLayer::OutputLayer(int batch_size, int input_size, int output_size)
     : Layer(batch_size, input_size, output_size) {}
 

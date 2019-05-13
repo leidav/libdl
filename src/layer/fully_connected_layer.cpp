@@ -13,7 +13,9 @@ FullyConnectedLayer::FullyConnectedLayer(int batch_size, int input_size,
       m_bias_weights(),
       m_dw(input_size, output_size),
       m_db(output_size),
-      m_regularization_factor(regularization_factor) {
+      m_regularization_factor(regularization_factor),
+      m_weight_updat_rule(input_size, output_size),
+      m_bias_updat_rule(output_size) {
   // Xavier/2 initialization
   auto t = std::chrono::high_resolution_clock::now();
   std::mt19937 generator(t.time_since_epoch().count());
@@ -36,13 +38,18 @@ void FullyConnectedLayer::backward(const Layer::Array& x,
                                    const Layer::Array& dy) {
   m_dw = x.matrix().transpose() * dy.matrix();
   m_dw += m_regularization_factor * m_weights;
-  m_db = dy.rowwise().sum();
+  m_db = dy.colwise().sum();
   m_dx = dy.matrix() * m_weights.transpose();
 }
 
 float FullyConnectedLayer::regularizationLoss() {
   return 0.5f * m_regularization_factor *
          (m_weights.array() * m_weights.array()).sum();
+}
+
+void FullyConnectedLayer::update(float learning_rate) {
+  m_weight_updat_rule.update(m_weights, m_dw, learning_rate);
+  m_bias_updat_rule.update(m_bias_weights, m_db, learning_rate);
 }
 
 };  // namespace nn

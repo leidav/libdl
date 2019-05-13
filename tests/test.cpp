@@ -8,6 +8,7 @@
 #include <layer/sigmoid_layer.h>
 #include <layer/softmax_layer.h>
 #include <neural_network.h>
+#include <update_rule.h>
 
 TEST_CASE("Fully Connected Layer", "[FCL]") {
   nn::Layer::Array x(2, 4);

@@ -21,6 +21,8 @@ class Layer {
 
   virtual float regularizationLoss();
 
+  virtual void update(float learning_rate);
+
  protected:
   int m_batch_size;
   int m_input_size;

@@ -2,6 +2,7 @@ add_library(dl)
 target_sources(dl PUBLIC
 	                    "${CMAKE_CURRENT_SOURCE_DIR}/neural_network.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/neural_network.cpp"
+	                    "${CMAKE_CURRENT_SOURCE_DIR}/update_rule.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/layer.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/layer.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/fully_connected_layer.h"

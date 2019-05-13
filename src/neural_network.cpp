@@ -47,9 +47,11 @@ void NeuralNetwork::backward(const Layer::Array &x) {
 	const Layer::Array *dxi = &next_layer->y();
 	layer->backward(*dxi, *dyi);
 	dyi = &layer->dx();
+	layer->update(1e-3f);
   }
   if (m_hidden_layer.size() > 0) {
 	m_hidden_layer[0]->backward(x, *dyi);
+	m_hidden_layer[0]->update(1e-3f);
   }
 }
 
