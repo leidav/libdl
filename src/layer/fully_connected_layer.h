@@ -9,7 +9,7 @@ class FullyConnectedLayer : public Layer {
 	  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>;
 
   FullyConnectedLayer(int batch_size, int input_size, int output_size,
-                      float regularization_factor);
+                      float regularization_factor = 1e-6f);
   virtual ~FullyConnectedLayer();
 
   void forward(const Array &x) final;

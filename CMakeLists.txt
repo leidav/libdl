@@ -3,6 +3,8 @@ project(libdl VERSION 0.1
 		DESCRIPTION "Deeplearning Library"
         LANGUAGES CXX)
 
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the build type" FORCE)
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
@@ -20,6 +22,7 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 			message(FATAL_ERROR "could not fetch git submodules")
 		endif()
 endif()
+
 
 find_package(OpenMP REQUIRED)
 
