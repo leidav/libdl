@@ -48,8 +48,6 @@ float FullyConnectedLayer::regularizationLoss() {
 void FullyConnectedLayer::update(float learning_rate) {
   m_weight_updat_rule.update(m_weights, m_dw, learning_rate);
   m_bias_updat_rule.update(m_bias_weights, m_db, learning_rate);
-  // m_weights -= m_dw * learning_rate;
-  // m_bias_weights -= m_db * learning_rate;
 }
 
 };  // namespace nn

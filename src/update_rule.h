@@ -7,6 +7,14 @@
 namespace nn {
 
 template <typename T>
+class SGDUpdate {
+ public:
+  void update(T &param, const T &gradient, float learning_rate) {
+	param += gradient * learning_rate;
+  }
+};
+
+template <typename T>
 class AdamUpdate {
  public:
   AdamUpdate(int size)
