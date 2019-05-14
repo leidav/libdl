@@ -9,7 +9,7 @@ LeastSquaresLayer::LeastSquaresLayer(int batch_size, int layer_size)
       m_loss(std::numeric_limits<float>::infinity()) {}
 
 LeastSquaresLayer::~LeastSquaresLayer() {}
-void LeastSquaresLayer::forward(const Layer::Array& x) { m_y = x; }
+void LeastSquaresLayer::forward(const Layer::Array& x, bool train) { m_y = x; }
 
 float LeastSquaresLayer::loss(const Eigen::VectorXf& ground_truth) {
   float loss_sum = 0;

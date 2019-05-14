@@ -10,7 +10,7 @@ SigmoidLayer::SigmoidLayer(int batch_size, int layer_size)
 
 SigmoidLayer::~SigmoidLayer() {}
 
-void SigmoidLayer::forward(const Layer::Array& x) {
+void SigmoidLayer::forward(const Layer::Array& x, bool train) {
   // m_y = x.unaryExpr(std::ptr_fun(sigmoid));
   // vectorizable
   m_y = ((x * -1.0f).exp() + 1.0f).inverse();

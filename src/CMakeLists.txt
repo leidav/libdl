@@ -7,6 +7,8 @@ target_sources(dl PUBLIC
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/layer.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/fully_connected_layer.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/fully_connected_layer.cpp"
+						"${CMAKE_CURRENT_SOURCE_DIR}/layer/dropout_layer.h"
+						"${CMAKE_CURRENT_SOURCE_DIR}/layer/dropout_layer.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/relu_layer.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/relu_layer.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/sigmoid_layer.h"

@@ -9,7 +9,7 @@ class LeastSquaresLayer : public OutputLayer {
   LeastSquaresLayer(int batch_size, int layer_size);
   virtual ~LeastSquaresLayer();
 
-  void forward(const Array& x) final;
+  void forward(const Array& x, bool train) final;
 
   float loss(const Eigen::VectorXf& ground_truth) final;
 

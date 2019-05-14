@@ -9,7 +9,7 @@ class ReLULayer : public Layer {
   ReLULayer(int batch_size, int layer_size);
   virtual ~ReLULayer();
 
-  void forward(const Array &x) final;
+  void forward(const Array &x, bool train) final;
 
   void backward(const Array &x, const Array &dy) final;
 };

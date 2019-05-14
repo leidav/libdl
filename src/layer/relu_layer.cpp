@@ -7,7 +7,7 @@ ReLULayer::ReLULayer(int batch_size, int layer_size)
 
 ReLULayer::~ReLULayer() {}
 
-void ReLULayer::forward(const Layer::Array& x) { m_y = x.max(0); }
+void ReLULayer::forward(const Layer::Array& x, bool train) { m_y = x.max(0); }
 
 void ReLULayer::backward(const Array& x, const Layer::Array& dy) {
   m_dx = dy * m_y.min(1).ceil();

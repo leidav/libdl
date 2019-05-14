@@ -14,7 +14,7 @@ class FullyConnectedLayer : public Layer {
                       float regularization_factor = 1e-6f);
   virtual ~FullyConnectedLayer();
 
-  void forward(const Array &x) final;
+  void forward(const Array &x, bool train) final;
 
   void backward(const Array &x, const Array &dy) final;
 

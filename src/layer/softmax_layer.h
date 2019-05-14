@@ -9,7 +9,7 @@ class SoftmaxLayer : public OutputLayer {
   SoftmaxLayer(int batch_size, int layer_size);
   virtual ~SoftmaxLayer();
 
-  void forward(const Array& x) final;
+  void forward(const Array& x, bool train) final;
 
   float loss(const Eigen::VectorXf& labels) final;
 

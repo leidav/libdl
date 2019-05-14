@@ -17,7 +17,8 @@ class NeuralNetwork {
 
   void addOutputLayer(std::unique_ptr<OutputLayer> output_layer);
 
-  float forward(const Layer::Array &input, const Layer::Array &ground_truth);
+  float forward(const Layer::Array &input, const Layer::Array &ground_truth,
+                bool train);
 
   void backward(const Layer::Array &x);
 

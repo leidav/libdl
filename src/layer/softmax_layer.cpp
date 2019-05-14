@@ -11,7 +11,7 @@ SoftmaxLayer::SoftmaxLayer(int batch_size, int layer_size)
       m_loss(std::numeric_limits<float>::infinity()) {}
 
 SoftmaxLayer::~SoftmaxLayer() {}
-void SoftmaxLayer::forward(const Layer::Array& x) {
+void SoftmaxLayer::forward(const Layer::Array& x, bool train) {
   // softmax
   for (int i = 0; i < x.rows(); i++) {
 	float max = x.row(i).maxCoeff();

@@ -26,15 +26,15 @@ void NeuralNetwork::addOutputLayer(std::unique_ptr<OutputLayer> output_layer) {
 }
 
 float NeuralNetwork::forward(const Layer::Array &input,
-                             const Layer::Array &ground_truth) {
+                             const Layer::Array &ground_truth, bool train) {
   const Layer::Array *xi = &input;
   float loss = 0;
   for (auto &layer : m_hidden_layer) {
-	layer->forward(*xi);
+	layer->forward(*xi, train);
 	xi = &layer->y();
 	loss += layer->regularizationLoss();
   }
-  m_output_layer->forward(*xi);
+  m_output_layer->forward(*xi, train);
   loss += m_output_layer->regularizationLoss();
   return m_output_layer->loss(ground_truth) + loss;
 }

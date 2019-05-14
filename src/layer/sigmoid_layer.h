@@ -9,7 +9,7 @@ class SigmoidLayer : public Layer {
   SigmoidLayer(int batch_size, int layer_size);
   virtual ~SigmoidLayer();
 
-  void forward(const Array &x) final;
+  void forward(const Array &x, bool train) final;
 
   void backward(const Array &x, const Array &dy) final;
 };

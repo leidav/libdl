@@ -17,8 +17,10 @@ FullyConnectedLayer::FullyConnectedLayer(int batch_size, int input_size,
       m_weight_updat_rule(input_size, output_size),
       m_bias_updat_rule(output_size) {
   // Xavier/2 initialization
-  auto t = std::chrono::high_resolution_clock::now();
-  std::mt19937 generator(t.time_since_epoch().count());
+  // auto t = std::chrono::high_resolution_clock::now();
+  // std::mt19937 generator(t.time_since_epoch().count());
+  static thread_local std::random_device seed_generator;
+  std::mt19937 generator(seed_generator());
   std::normal_distribution<float> distribution(
       0.0, sqrtf(2.0f / static_cast<float>(input_size)));
 
@@ -29,7 +31,7 @@ FullyConnectedLayer::FullyConnectedLayer(int batch_size, int input_size,
 }
 FullyConnectedLayer::~FullyConnectedLayer() {}
 
-void FullyConnectedLayer::forward(const Layer::Array& x) {
+void FullyConnectedLayer::forward(const Layer::Array& x, bool train) {
   m_y.matrix().noalias() = x.matrix() * m_weights;
   m_y.matrix().rowwise() += m_bias_weights.transpose();
 }

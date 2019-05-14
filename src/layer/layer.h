@@ -11,7 +11,7 @@ class Layer {
   using Array =
       Eigen::Array<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-  virtual void forward(const Array& x) = 0;
+  virtual void forward(const Array& x, bool train) = 0;
   const Array& y();
   const Array& dx();
   int inputSize();
@@ -35,8 +35,6 @@ class OutputLayer : public Layer {
  public:
   OutputLayer(int batch_size, int input_size, int output_size);
   virtual ~OutputLayer();
-
-  virtual void forward(const Array& x) = 0;
 
   void backward(const Array& x, const Array& dy) final;
 
