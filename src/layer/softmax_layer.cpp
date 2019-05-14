@@ -21,10 +21,10 @@ void SoftmaxLayer::forward(const Layer::Array& x, bool train) {
   }
 }
 
-float SoftmaxLayer::loss(const Eigen::VectorXf& labels) {
+float SoftmaxLayer::loss(const Layer::Array& labels) {
   float loss_sum = 0;
   for (int i = 0; i < m_batch_size; i++) {
-	int label_pos = static_cast<int>(labels(i));
+	int label_pos = static_cast<int>(labels(i, 0));
 	loss_sum += logf(m_y(i, label_pos));
 	// gradient
 	m_dx.row(i) = m_y.row(i);

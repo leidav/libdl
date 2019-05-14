@@ -39,7 +39,16 @@ float NeuralNetwork::forward(const Layer::Array &input,
   return m_output_layer->loss(ground_truth) + loss;
 }
 
-void NeuralNetwork::backward(const Layer::Array &x) {
+void NeuralNetwork::execute(const Layer::Array &input) {
+  const Layer::Array *xi = &input;
+  for (auto &layer : m_hidden_layer) {
+	layer->forward(*xi, false);
+	xi = &layer->y();
+  }
+  m_output_layer->forward(*xi, false);
+}
+
+void NeuralNetwork::backward(const Layer::Array &x, float learning_rate) {
   const Layer::Array *dyi = &m_output_layer->dx();
   for (auto i = m_hidden_layer.rbegin(); i != m_hidden_layer.rend() - 1; i++) {
 	auto layer = i->get();
@@ -51,7 +60,7 @@ void NeuralNetwork::backward(const Layer::Array &x) {
   }
   if (m_hidden_layer.size() > 0) {
 	m_hidden_layer[0]->backward(x, *dyi);
-	m_hidden_layer[0]->update(1e-3f);
+	m_hidden_layer[0]->update(learning_rate);
   }
 }
 

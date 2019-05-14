@@ -27,7 +27,6 @@ float bernoulli(float) {
 
 DropOutLayer::DropOutLayer(int batch_size, int layer_size)
     : Layer(batch_size, layer_size, layer_size),
-      // m_mask(Layer::Array::Zero(batch_size, layer_size)) {}
       m_mask(batch_size, layer_size) {}
 
 DropOutLayer::~DropOutLayer() {}

@@ -1,9 +1,10 @@
 #include "fully_connected_layer.h"
-#include <chrono>
 #include <cmath>
 #include <random>
 
 namespace nn {
+static thread_local std::random_device g_seed_generator;
+static thread_local std::mt19937 g_mersenne_twister(g_seed_generator());
 
 FullyConnectedLayer::FullyConnectedLayer(int batch_size, int input_size,
                                          int output_size,
@@ -17,14 +18,9 @@ FullyConnectedLayer::FullyConnectedLayer(int batch_size, int input_size,
       m_weight_updat_rule(input_size, output_size),
       m_bias_updat_rule(output_size) {
   // Xavier/2 initialization
-  // auto t = std::chrono::high_resolution_clock::now();
-  // std::mt19937 generator(t.time_since_epoch().count());
-  static thread_local std::random_device seed_generator;
-  std::mt19937 generator(seed_generator());
   std::normal_distribution<float> distribution(
       0.0, sqrtf(2.0f / static_cast<float>(input_size)));
-
-  auto rd = [&generator, &distribution]() { return distribution(generator); };
+  auto rd = [&distribution]() { return distribution(g_mersenne_twister); };
 
   m_weights = WeightMatrix::NullaryExpr(input_size, output_size, rd);
   m_bias_weights = Eigen::VectorXf::NullaryExpr(output_size, rd);
@@ -52,6 +48,8 @@ float FullyConnectedLayer::regularizationLoss() {
 void FullyConnectedLayer::update(float learning_rate) {
   m_weight_updat_rule.update(m_weights, m_dw, learning_rate);
   m_bias_updat_rule.update(m_bias_weights, m_db, learning_rate);
+  // m_weights -= m_dw * learning_rate;
+  // m_bias_weights -= m_db * learning_rate;
 }
 
 };  // namespace nn

@@ -5,6 +5,7 @@
 
 #include <layer/dropout_layer.h>
 #include <layer/fully_connected_layer.h>
+#include <layer/least_squares_layer.h>
 #include <layer/relu_layer.h>
 #include <layer/sigmoid_layer.h>
 #include <layer/softmax_layer.h>
@@ -81,14 +82,41 @@ TEST_CASE("Neural Network", "[NN]") {
   net.addOutputLayer(std::make_unique<nn::SoftmaxLayer>(32, 10));
 
   nn::Layer::Array a = nn::Layer::Array::Random(32, 100);
-  Eigen::VectorXf labels(40);
+  Eigen::VectorXf labels(40, 1);
   labels << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2,
       3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9;
   float loss = net.forward(a, nn::Layer::Array(labels), true);
-  net.backward(a);
+  // net.backward(a);
   const nn::Layer::Array& y = net.y();
   REQUIRE(y.rows() == 32);
   REQUIRE(y.cols() == 10);
   std::cout << "loss: " << loss << std::endl;
   std::cout << "array: " << y << std::endl;
+}
+
+TEST_CASE("Xor Test", "[Xor]") {
+  nn::NeuralNetwork net;
+  net.addHiddenLayer(
+      std::make_unique<nn::FullyConnectedLayer>(4, 2, 16, 1e-8f));
+  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(4, 16));
+  net.addHiddenLayer(
+      std::make_unique<nn::FullyConnectedLayer>(4, 16, 1, 1e-8f));
+  net.addOutputLayer(std::make_unique<nn::LeastSquaresLayer>(4, 1));
+
+  nn::Layer::Array input = nn::Layer::Array(4, 2);
+  nn::Layer::Array expected_output = nn::Layer::Array(4, 1);
+  input << 0, 0, 0, 1, 1, 0, 1, 1;
+  expected_output << 0, 1, 1, 0;
+
+  // train 1000 epochs
+  float loss = 0;
+  for (int i = 0; i < 1000; i++) {
+	loss = net.forward(input, expected_output, true);
+	net.backward(input, 0.01);
+  }
+  net.execute(input);
+  nn::Layer::Array output = net.y().round();
+  REQUIRE(output.isApprox(expected_output));
+  std::cout << "loss: " << loss << std::endl;
+  std::cout << "array: " << output + 0.0 << std::endl;
 }

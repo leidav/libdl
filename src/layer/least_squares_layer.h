@@ -1,5 +1,5 @@
-#ifndef CROSS_ENTROPY_LAYER_H
-#define CROSS_ENTROPY_LAYER_H
+#ifndef LEAST_SQUARES_LAYER_H
+#define LEAST_SQUARES_LAYER_H
 
 #include "layer.h"
 
@@ -11,7 +11,7 @@ class LeastSquaresLayer : public OutputLayer {
 
   void forward(const Array& x, bool train) final;
 
-  float loss(const Eigen::VectorXf& ground_truth) final;
+  float loss(const Array& ground_truth) final;
 
  private:
   int m_layer_size;

@@ -1,5 +1,5 @@
-#ifndef CROSS_ENTROPY_LAYER_H
-#define CROSS_ENTROPY_LAYER_H
+#ifndef SOFTMAX_LAYER_H
+#define SOFTMAX_LAYER_H
 
 #include "layer.h"
 
@@ -11,7 +11,7 @@ class SoftmaxLayer : public OutputLayer {
 
   void forward(const Array& x, bool train) final;
 
-  float loss(const Eigen::VectorXf& labels) final;
+  float loss(const Array& labels) final;
 
  private:
   int m_layer_size;

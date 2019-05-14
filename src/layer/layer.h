@@ -38,7 +38,7 @@ class OutputLayer : public Layer {
 
   void backward(const Array& x, const Array& dy) final;
 
-  virtual float loss(const Eigen::VectorXf& ground_truth) = 0;
+  virtual float loss(const Array& ground_truth) = 0;
 };
 };  // namespace nn
 
