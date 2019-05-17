@@ -6,10 +6,9 @@ namespace nn {
 static thread_local std::random_device g_seed_generator;
 static thread_local std::mt19937 g_mersenne_twister(g_seed_generator());
 
-FullyConnectedLayer::FullyConnectedLayer(int batch_size, int input_size,
-                                         int output_size,
+FullyConnectedLayer::FullyConnectedLayer(int input_size, int output_size,
                                          float regularization_factor)
-    : Layer(batch_size, input_size, output_size),
+    : Layer(input_size, output_size),
       m_weights(),
       m_bias_weights(),
       m_dw(input_size, output_size),
@@ -27,17 +26,19 @@ FullyConnectedLayer::FullyConnectedLayer(int batch_size, int input_size,
 }
 FullyConnectedLayer::~FullyConnectedLayer() {}
 
-void FullyConnectedLayer::forward(const Layer::Array& x, bool train) {
-  m_y.matrix().noalias() = x.matrix() * m_weights;
-  m_y.matrix().rowwise() += m_bias_weights.transpose();
+void FullyConnectedLayer::forward(ArrayRef y, const ConstArrayRef &x,
+                                  bool train) {
+  y.matrix().noalias() = x.matrix() * m_weights;
+  y.matrix().rowwise() += m_bias_weights.transpose();
 }
 
-void FullyConnectedLayer::backward(const Layer::Array& x,
-                                   const Layer::Array& dy) {
+void FullyConnectedLayer::backward(ArrayRef dx, const ConstArrayRef &x,
+                                   const ConstArrayRef &y,
+                                   const ConstArrayRef &dy) {
   m_dw = x.matrix().transpose() * dy.matrix();
   m_dw += m_regularization_factor * m_weights;
   m_db = dy.colwise().sum();
-  m_dx = dy.matrix() * m_weights.transpose();
+  dx = dy.matrix() * m_weights.transpose();
 }
 
 float FullyConnectedLayer::regularizationLoss() {

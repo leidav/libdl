@@ -6,12 +6,13 @@
 namespace nn {
 class LeastSquaresLayer : public OutputLayer {
  public:
-  LeastSquaresLayer(int batch_size, int layer_size);
+  LeastSquaresLayer(int layer_size);
   virtual ~LeastSquaresLayer();
 
-  void forward(const Array& x, bool train) final;
+  void forward(ArrayRef y, const ConstArrayRef& x, bool train) final;
 
-  float loss(const Array& ground_truth) final;
+  float loss(ArrayRef dx, const ConstArrayRef& x,
+             const ConstArrayRef& ground_truth) final;
 
  private:
   int m_layer_size;

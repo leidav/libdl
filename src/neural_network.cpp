@@ -3,7 +3,7 @@
 
 namespace nn {
 
-NeuralNetwork::NeuralNetwork() {}
+NeuralNetwork::NeuralNetwork(int batch_size) : m_batch_size(batch_size) {}
 
 NeuralNetwork::~NeuralNetwork() {}
 
@@ -13,6 +13,8 @@ void NeuralNetwork::addHiddenLayer(std::unique_ptr<Layer> layer) {
 	spdlog::error("layer size mismatch");
 	std::terminate();
   }
+  m_hidden_layer_data.emplace_back(m_batch_size, layer->inputSize(),
+                                   layer->outputSize());
   m_hidden_layer.push_back(std::move(layer));
 }
 
@@ -22,47 +24,59 @@ void NeuralNetwork::addOutputLayer(std::unique_ptr<OutputLayer> output_layer) {
 	spdlog::error("layer size mismatch");
 	std::terminate();
   }
+  m_output_layer_data = LayerData(m_batch_size, output_layer->inputSize(),
+                                  output_layer->outputSize());
   m_output_layer = std::move(output_layer);
 }
 
-float NeuralNetwork::forward(const Layer::Array &input,
-                             const Layer::Array &ground_truth, bool train) {
-  const Layer::Array *xi = &input;
+float NeuralNetwork::forward(const Layer::ConstArrayRef &input,
+                             const Layer::ConstArrayRef &ground_truth,
+                             bool train) {
   float loss = 0;
-  for (auto &layer : m_hidden_layer) {
-	layer->forward(*xi, train);
-	xi = &layer->y();
-	loss += layer->regularizationLoss();
+  Layer::Array &y = m_hidden_layer_data[0].y;
+  m_hidden_layer[0]->forward(y, input, train);
+  for (size_t i = 1; i < m_hidden_layer.size(); i++) {
+	const Layer::ConstArrayRef x = m_hidden_layer_data[i - 1].y;
+	Layer::ArrayRef y = m_hidden_layer_data[i].y;
+	m_hidden_layer[i]->forward(y, x, train);
+	loss += m_hidden_layer[i]->regularizationLoss();
   }
-  m_output_layer->forward(*xi, train);
+  m_output_layer->forward(m_output_layer_data.y, m_hidden_layer_data.back().y,
+                          train);
   loss += m_output_layer->regularizationLoss();
-  return m_output_layer->loss(ground_truth) + loss;
+  return m_output_layer->loss(m_output_layer_data.dx, m_output_layer_data.y,
+                              ground_truth) +
+         loss;
 }
 
-void NeuralNetwork::execute(const Layer::Array &input) {
-  const Layer::Array *xi = &input;
-  for (auto &layer : m_hidden_layer) {
-	layer->forward(*xi, false);
-	xi = &layer->y();
+void NeuralNetwork::execute(const Layer::ConstArrayRef &input) {
+  Layer::Array &y = m_hidden_layer_data[0].y;
+  m_hidden_layer[0]->forward(y, input, false);
+  for (size_t i = 1; i < m_hidden_layer.size(); i++) {
+	const Layer::ConstArrayRef x = m_hidden_layer_data[i - 1].y;
+	Layer::ArrayRef y = m_hidden_layer_data[i].y;
+	m_hidden_layer[i]->forward(y, x, false);
   }
-  m_output_layer->forward(*xi, false);
+  m_output_layer->forward(m_output_layer_data.y, m_hidden_layer_data.back().y,
+                          false);
 }
 
-void NeuralNetwork::backward(const Layer::Array &x, float learning_rate) {
-  const Layer::Array *dyi = &m_output_layer->dx();
-  for (auto i = m_hidden_layer.rbegin(); i != m_hidden_layer.rend() - 1; i++) {
-	auto layer = i->get();
-	auto next_layer = (i + 1)->get();
-	const Layer::Array *dxi = &next_layer->y();
-	layer->backward(*dxi, *dyi);
-	dyi = &layer->dx();
-	layer->update(1e-3f);
-  }
-  if (m_hidden_layer.size() > 0) {
-	m_hidden_layer[0]->backward(x, *dyi);
-	m_hidden_layer[0]->update(learning_rate);
+void NeuralNetwork::backward(const Layer::ConstArrayRef &input,
+                             float learning_rate) {
+  for (size_t i = m_hidden_layer.size() - 1; i != 0; i--) {
+	const Layer::ConstArrayRef dy = (i == m_hidden_layer.size() - 1)
+	                                    ? m_output_layer_data.dx
+	                                    : m_hidden_layer_data[i + 1].dx;
+	const Layer::ConstArrayRef x =
+	    (i == 0) ? input : Layer::ConstArrayRef(m_hidden_layer_data[i - 1].y);
+	const Layer::ConstArrayRef y = m_hidden_layer_data[i].y;
+	Layer::Array &dx = m_hidden_layer_data[i].dx;
+	m_hidden_layer[i]->backward(dx, x, y, dy);
+	m_hidden_layer[i]->update(learning_rate);
   }
 }
 
-const Layer::Array &NeuralNetwork::y() { return m_output_layer->y(); }
+const Layer::ConstArrayRef NeuralNetwork::y() {
+  return Layer::ConstArrayRef(m_output_layer_data.y);
+}
 };  // namespace nn

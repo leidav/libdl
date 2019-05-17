@@ -10,13 +10,14 @@ class FullyConnectedLayer : public Layer {
   using WeightMatrix =
 	  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-  FullyConnectedLayer(int batch_size, int input_size, int output_size,
+  FullyConnectedLayer(int input_size, int output_size,
                       float regularization_factor = 1e-6f);
   virtual ~FullyConnectedLayer();
 
-  void forward(const Array &x, bool train) final;
+  void forward(ArrayRef y, const ConstArrayRef& x, bool train) final;
 
-  void backward(const Array &x, const Array &dy) final;
+  void backward(ArrayRef dx, const ConstArrayRef& x, const ConstArrayRef& y,
+                const ConstArrayRef& dy) final;
 
   float regularizationLoss() final;
 

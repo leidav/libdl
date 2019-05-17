@@ -7,9 +7,17 @@
 #include "layer/layer.h"
 
 namespace nn {
+struct LayerData {
+  LayerData() : y(), dx() {}
+  LayerData(int batch_size, int input_size, int output_size)
+      : y(batch_size, output_size), dx(batch_size, input_size) {}
+  Layer::Array y;
+  Layer::Array dx;
+};
+
 class NeuralNetwork {
  public:
-  NeuralNetwork();
+  NeuralNetwork(int batch_size);
 
   ~NeuralNetwork();
 
@@ -17,18 +25,21 @@ class NeuralNetwork {
 
   void addOutputLayer(std::unique_ptr<OutputLayer> output_layer);
 
-  float forward(const Layer::Array &input, const Layer::Array &ground_truth,
-                bool train);
+  float forward(const Layer::ConstArrayRef& input,
+                const Layer::ConstArrayRef& ground_truth, bool train);
 
-  void execute(const Layer::Array &input);
+  void execute(const Layer::ConstArrayRef& input);
 
-  void backward(const Layer::Array &x, float learning_rate);
+  void backward(const Layer::ConstArrayRef& x, float learning_rate);
 
-  const Layer::Array &y();
+  const Layer::ConstArrayRef y();
 
  private:
+  int m_batch_size;
   std::vector<std::unique_ptr<Layer>> m_hidden_layer;
   std::unique_ptr<OutputLayer> m_output_layer;
+  std::vector<LayerData> m_hidden_layer_data;
+  LayerData m_output_layer_data;
 };
 };  // namespace nn
 

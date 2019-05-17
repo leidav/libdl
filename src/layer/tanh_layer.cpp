@@ -1,15 +1,17 @@
 #include "tanh_layer.h"
 
 namespace nn {
-TanhLayer::TanhLayer(int batch_size, int layer_size)
-    : Layer(batch_size, layer_size, layer_size) {}
+TanhLayer::TanhLayer(int layer_size) : Layer(layer_size, layer_size) {}
 
 TanhLayer::~TanhLayer() {}
 
-void TanhLayer::forward(const Layer::Array& x, bool train) { m_y = x.tanh(); }
+void TanhLayer::forward(ArrayRef y, const ConstArrayRef &x, bool train) {
+  y = x.tanh();
+}
 
-void TanhLayer::backward(const Array& x, const Layer::Array& dy) {
-  m_dx = 1.0f - m_y.square();
+void TanhLayer::backward(ArrayRef dx, const ConstArrayRef &x,
+                         const ConstArrayRef &y, const ConstArrayRef &dy) {
+  dx = 1.0f - y.square();
 }
 
 };  // namespace nn

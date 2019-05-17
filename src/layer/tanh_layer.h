@@ -3,17 +3,16 @@
 
 #include "layer.h"
 
-namespace nn
-{
-class TanhLayer : public Layer
-{
-public:
-	TanhLayer(int batch_size, int layer_size);
-	virtual ~TanhLayer();
+namespace nn {
+class TanhLayer : public Layer {
+ public:
+  TanhLayer(int layer_size);
+  virtual ~TanhLayer();
 
-	void forward(const Array &x, bool train) final;
+  void forward(ArrayRef y, const ConstArrayRef& x, bool train) final;
 
-	void backward(const Array &x, const Array &dy) final;
+  void backward(ArrayRef dx, const ConstArrayRef& x, const ConstArrayRef& y,
+                const ConstArrayRef& dy) final;
 };
 };  // namespace nn
 

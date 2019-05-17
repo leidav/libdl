@@ -6,12 +6,13 @@
 namespace nn {
 class SigmoidLayer : public Layer {
  public:
-  SigmoidLayer(int batch_size, int layer_size);
+  SigmoidLayer(int layer_size);
   virtual ~SigmoidLayer();
 
-  void forward(const Array &x, bool train) final;
+  void forward(ArrayRef y, const ConstArrayRef& x, bool train) final;
 
-  void backward(const Array &x, const Array &dy) final;
+  void backward(ArrayRef dx, const ConstArrayRef& x, const ConstArrayRef& y,
+                const ConstArrayRef& dy) final;
 };
 };  // namespace nn
 

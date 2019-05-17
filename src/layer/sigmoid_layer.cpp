@@ -5,19 +5,17 @@ namespace nn {
 static float sigmoid(float x) { return 1.0f / (1.0f + expf(-x)); }
 static float elliotSigmoid(float x) { return 1.0f / (1.0f + abs(x)); }
 
-SigmoidLayer::SigmoidLayer(int batch_size, int layer_size)
-    : Layer(batch_size, layer_size, layer_size) {}
+SigmoidLayer::SigmoidLayer(int layer_size) : Layer(layer_size, layer_size) {}
 
 SigmoidLayer::~SigmoidLayer() {}
 
-void SigmoidLayer::forward(const Layer::Array& x, bool train) {
-  // m_y = x.unaryExpr(std::ptr_fun(sigmoid));
-  // vectorizable
-  m_y = ((x * -1.0f).exp() + 1.0f).inverse();
+void SigmoidLayer::forward(ArrayRef y, const ConstArrayRef& x, bool train) {
+  y = ((x * -1.0f).exp() + 1.0f).inverse();
 }
 
-void SigmoidLayer::backward(const Array& x, const Layer::Array& dy) {
-  m_dx = (m_y * (1 - m_y)) * dy;
+void SigmoidLayer::backward(ArrayRef dx, const ConstArrayRef& x,
+                            const ConstArrayRef& y, const ConstArrayRef& dy) {
+  dx = (y * (1 - y)) * dy;
 }
 
 };  // namespace nn

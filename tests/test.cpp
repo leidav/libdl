@@ -18,10 +18,10 @@ TEST_CASE("Fully Connected Layer", "[FCL]") {
   x << 1, 2, 3, 4, 5, 6, 7, 8;
   nn::Layer::Array expected_y(2, 3);
   expected_y << 2, 3, 4, 6, 7, 8;
+  nn::Layer::Array y(2, 3);
 
-  nn::FullyConnectedLayer fcl(2, 4, 3, 1e-6f);
-  fcl.forward(x, false);
-  const nn::Layer::Array& y = fcl.y();
+  nn::FullyConnectedLayer fcl(4, 3, 1e-6f);
+  fcl.forward(y, x, false);
   REQUIRE(y.rows() == 2);
   REQUIRE(y.cols() == 3);
   // REQUIRE(y.isApprox(expected_y));
@@ -35,9 +35,9 @@ TEST_CASE("Sigmoid Layer", "[SIG]") {
   nn::Layer::Array expected_y(2, 4);
   expected_y << 0.73105858f, 0.88079708f, 0.95257413f, 0.98201379f, 0.99330715f,
       0.99752738f, 0.99908895f, 0.99966465f;
-  nn::SigmoidLayer sigmoid(2, 4);
-  sigmoid.forward(x, false);
-  const nn::Layer::Array& y = sigmoid.y();
+  nn::Layer::Array y(2, 4);
+  nn::SigmoidLayer sigmoid(4);
+  sigmoid.forward(y, x, false);
   REQUIRE(y.isApprox(expected_y));
 }
 
@@ -46,16 +46,16 @@ TEST_CASE("ReLU Layer", "[ReLU]") {
   x << -1, -0.2f, 0.1f, 4, -5, 6, -7, 8;
   nn::Layer::Array expected_y(2, 4);
   expected_y << 0, 0, 0.1f, 4, 0, 6, 0, 8;
-  nn::ReLULayer relu(2, 4);
-  relu.forward(x, false);
-  const nn::Layer::Array& y = relu.y();
+  nn::Layer::Array y(2, 4);
+  nn::ReLULayer relu(4);
+  relu.forward(y, x, false);
   REQUIRE(y.isApprox(expected_y));
 }
 TEST_CASE("Dropout Layer", "[Dropout]") {
   nn::Layer::Array x = nn::Layer::Array::Ones(4, 100);
+  nn::Layer::Array y(4, 100);
   nn::DropOutLayer dropout(4, 100);
-  dropout.forward(x, true);
-  const nn::Layer::Array& y = dropout.y();
+  dropout.forward(y, x, true);
   nn::Layer::Array row_sum = y.rowwise().sum();
   float average = row_sum.sum() / y.rows();
   std::cout << "average dropout: " << average << std::endl;
@@ -67,27 +67,26 @@ TEST_CASE("Dropout Layer", "[Dropout]") {
 }
 
 TEST_CASE("Neural Network", "[NN]") {
-  nn::NeuralNetwork net;
+  nn::NeuralNetwork net(32);
   net.addHiddenLayer(
-      std::make_unique<nn::FullyConnectedLayer>(32, 100, 200, 1e-6f));
-  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(32, 200));
+      std::make_unique<nn::FullyConnectedLayer>(100, 200, 1e-6f));
+  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(200));
   net.addHiddenLayer(std::make_unique<nn::DropOutLayer>(32, 200));
   net.addHiddenLayer(
-      std::make_unique<nn::FullyConnectedLayer>(32, 200, 100, 1e-6f));
-  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(32, 100));
+      std::make_unique<nn::FullyConnectedLayer>(200, 100, 1e-6f));
+  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(100));
   net.addHiddenLayer(std::make_unique<nn::DropOutLayer>(32, 100));
-  net.addHiddenLayer(
-      std::make_unique<nn::FullyConnectedLayer>(32, 100, 10, 1e-6f));
+  net.addHiddenLayer(std::make_unique<nn::FullyConnectedLayer>(100, 10, 1e-6f));
   net.addHiddenLayer(std::make_unique<nn::DropOutLayer>(32, 10));
-  net.addOutputLayer(std::make_unique<nn::SoftmaxLayer>(32, 10));
+  net.addOutputLayer(std::make_unique<nn::SoftmaxLayer>(10));
 
   nn::Layer::Array a = nn::Layer::Array::Random(32, 100);
+  nn::Layer::Array y(32, 10);
   Eigen::VectorXf labels(40, 1);
   labels << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2,
       3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  float loss = net.forward(a, nn::Layer::Array(labels), true);
+  float loss = net.forward(a, labels, true);
   // net.backward(a);
-  const nn::Layer::Array& y = net.y();
   REQUIRE(y.rows() == 32);
   REQUIRE(y.cols() == 10);
   std::cout << "loss: " << loss << std::endl;
@@ -95,13 +94,11 @@ TEST_CASE("Neural Network", "[NN]") {
 }
 
 TEST_CASE("Xor Test", "[Xor]") {
-  nn::NeuralNetwork net;
-  net.addHiddenLayer(
-      std::make_unique<nn::FullyConnectedLayer>(4, 2, 16, 1e-8f));
-  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(4, 16));
-  net.addHiddenLayer(
-      std::make_unique<nn::FullyConnectedLayer>(4, 16, 1, 1e-8f));
-  net.addOutputLayer(std::make_unique<nn::LeastSquaresLayer>(4, 1));
+  nn::NeuralNetwork net(4);
+  net.addHiddenLayer(std::make_unique<nn::FullyConnectedLayer>(2, 8, 1e-8f));
+  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(8));
+  net.addHiddenLayer(std::make_unique<nn::FullyConnectedLayer>(8, 1, 1e-8f));
+  net.addOutputLayer(std::make_unique<nn::LeastSquaresLayer>(1));
 
   nn::Layer::Array input = nn::Layer::Array(4, 2);
   nn::Layer::Array expected_output = nn::Layer::Array(4, 1);
@@ -112,7 +109,7 @@ TEST_CASE("Xor Test", "[Xor]") {
   float loss = 0;
   for (int i = 0; i < 1000; i++) {
 	loss = net.forward(input, expected_output, true);
-	net.backward(input, 0.01);
+	net.backward(input, 0.01f);
   }
   net.execute(input);
   nn::Layer::Array output = net.y().round();

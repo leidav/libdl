@@ -26,22 +26,22 @@ float bernoulli(float) {
 }
 
 DropOutLayer::DropOutLayer(int batch_size, int layer_size)
-    : Layer(batch_size, layer_size, layer_size),
-      m_mask(batch_size, layer_size) {}
+    : Layer(layer_size, layer_size), m_mask(batch_size, layer_size) {}
 
 DropOutLayer::~DropOutLayer() {}
 
-void DropOutLayer::forward(const Layer::Array &x, bool train) {
+void DropOutLayer::forward(ArrayRef y, const ConstArrayRef &x, bool train) {
   if (train) {
 	m_mask = m_mask.unaryExpr(std::ptr_fun(bernoulli));
-	m_y = m_mask * x;
+	y = m_mask * x;
   } else {
-	m_y = x;
+	y = x;
   }
 }
 
-void DropOutLayer::backward(const Layer::Array &x, const Layer::Array &dy) {
-  m_dx = m_mask * dy;
+void DropOutLayer::backward(ArrayRef dx, const ConstArrayRef &x,
+                            const ConstArrayRef &y, const ConstArrayRef &dy) {
+  dx = m_mask * dy;
 }
 
 };  // namespace nn

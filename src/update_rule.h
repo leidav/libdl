@@ -9,7 +9,15 @@ namespace nn {
 template <typename T>
 class SGDUpdate {
  public:
-  void update(T &param, const T &gradient, float learning_rate) {
+  void update(Eigen::Ref<T> param, const Eigen::Ref<const T> &gradient,
+              float learning_rate) {
+	param += gradient * learning_rate;
+  }
+};
+template <>
+class SGDUpdate<float> {
+ public:
+  void update(float &param, float gradient, float learning_rate) {
 	param += gradient * learning_rate;
   }
 };
@@ -25,7 +33,8 @@ class AdamUpdate {
       : m_t(0),
         m_gradient_average(T::Zero(rows, columns)),
         m_squared_gradient_average(T::Zero(rows, columns)) {}
-  void update(T &param, const T &gradient, float learning_rate) {
+  void update(Eigen::Ref<T> param, const Eigen::Ref<const T> &gradient,
+              float learning_rate) {
 	m_t++;
 	// https://arxiv.org/pdf/1412.6980.pdf page 2
 	m_gradient_average.array() =

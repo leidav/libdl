@@ -6,12 +6,13 @@
 namespace nn {
 class SoftmaxLayer : public OutputLayer {
  public:
-  SoftmaxLayer(int batch_size, int layer_size);
+  SoftmaxLayer(int layer_size);
   virtual ~SoftmaxLayer();
 
-  void forward(const Array& x, bool train) final;
+  void forward(ArrayRef y, const ConstArrayRef& x, bool train) final;
 
-  float loss(const Array& labels) final;
+  float loss(ArrayRef dx, const ConstArrayRef& x,
+             const ConstArrayRef& labels) final;
 
  private:
   int m_layer_size;
