@@ -3,6 +3,7 @@
 #include <catch2/catch.hpp>
 #include <memory>
 
+#include <layer/batchnorm_layer.h>
 #include <layer/dropout_layer.h>
 #include <layer/fully_connected_layer.h>
 #include <layer/least_squares_layer.h>
@@ -65,6 +66,17 @@ TEST_CASE("Dropout Layer", "[Dropout]") {
   REQUIRE(average > min);
   REQUIRE(average < max);
 }
+TEST_CASE("Batch Normalization Layer", "[Batchnorm]") {
+  nn::Layer::Array x = nn::Layer::Array::Random(4, 100);
+  x += 100;
+  nn::Layer::Array dx(4, 100);
+  nn::Layer::Array dy = nn::Layer::Array::Ones(4, 100);
+  nn::Layer::Array y(4, 100);
+  nn::BatchnormLayer batchnorm(4, 100);
+  batchnorm.forward(y, x, true);
+  batchnorm.backward(dx, x, y, dy);
+  batchnorm.forward(y, x, false);
+}
 
 TEST_CASE("Neural Network", "[NN]") {
   nn::NeuralNetwork net(32);
@@ -85,10 +97,11 @@ TEST_CASE("Neural Network", "[NN]") {
   Eigen::VectorXf labels(40, 1);
   labels << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2,
       3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  float loss = net.forward(a, labels, true);
-  // net.backward(a);
+  float loss = net.forward(a, labels, false);
+  net.backward(a, 0.01f);
   REQUIRE(y.rows() == 32);
   REQUIRE(y.cols() == 10);
+  y = net.y();
   std::cout << "loss: " << loss << std::endl;
   std::cout << "array: " << y << std::endl;
 }

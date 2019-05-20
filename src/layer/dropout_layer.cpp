@@ -33,7 +33,7 @@ DropOutLayer::~DropOutLayer() {}
 void DropOutLayer::forward(ArrayRef y, const ConstArrayRef &x, bool train) {
   if (train) {
 	m_mask = m_mask.unaryExpr(std::ptr_fun(bernoulli));
-	y = m_mask * x;
+	y = x * m_mask;
   } else {
 	y = x;
   }

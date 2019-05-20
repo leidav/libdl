@@ -28,7 +28,7 @@ class NeuralNetwork {
   float forward(const Layer::ConstArrayRef& input,
                 const Layer::ConstArrayRef& ground_truth, bool train);
 
-  void execute(const Layer::ConstArrayRef& input);
+  void execute(Layer::ConstArrayRef input);
 
   void backward(const Layer::ConstArrayRef& x, float learning_rate);
 
