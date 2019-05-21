@@ -124,9 +124,41 @@ TEST_CASE("Xor Test", "[Xor]") {
 	loss = net.forward(input, expected_output, true);
 	net.backward(input, 0.01f);
   }
-  net.execute(input);
-  nn::Layer::Array output = net.y().round();
-  REQUIRE(output.isApprox(expected_output));
+  // nn::Layer::Array output = net.y().round();
+  // REQUIRE(output.isApprox(expected_output));
   std::cout << "loss: " << loss << std::endl;
-  std::cout << "array: " << output + 0.0 << std::endl;
+
+  nn::Layer::Array test_data1(1, 2);
+  test_data1 << 0, 0;
+  nn::Layer::Array test_data2(1, 2);
+  test_data2 << 0, 1;
+  nn::Layer::Array test_data3(1, 2);
+  test_data3 << 1, 0;
+  nn::Layer::Array test_data4(1, 2);
+  test_data4 << 1, 1;
+  nn::Layer::Array expected_result1(1, 1);
+  expected_result1 << 0;
+  nn::Layer::Array expected_result2(1, 1);
+  expected_result2 << 1;
+  nn::Layer::Array expected_result3(1, 1);
+  expected_result3 << 1;
+  nn::Layer::Array expected_result4(1, 1);
+  expected_result4 << 0;
+
+  net.inference(test_data1);
+  nn::Layer::Array output = net.inference_result().round();
+  REQUIRE(output.isApprox(expected_result1));
+  std::cout << "0 xor 0: " << output + 0.0 << std::endl;
+  net.inference(test_data2);
+  output = net.inference_result().round();
+  REQUIRE(output.isApprox(expected_result2));
+  std::cout << "0 xor 1: " << output + 0.0 << std::endl;
+  net.inference(test_data3);
+  output = net.inference_result().round();
+  REQUIRE(output.isApprox(expected_result3));
+  std::cout << "1 xor 0: " << output + 0.0 << std::endl;
+  net.inference(test_data4);
+  output = net.inference_result().round();
+  REQUIRE(output.isApprox(expected_result4));
+  std::cout << "1 xor 1: " << output + 0.0 << std::endl;
 }

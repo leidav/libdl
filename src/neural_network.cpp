@@ -15,6 +15,7 @@ void NeuralNetwork::addHiddenLayer(std::unique_ptr<Layer> layer) {
   }
   m_hidden_layer_data.emplace_back(m_batch_size, layer->inputSize(),
                                    layer->outputSize());
+  m_hidden_layer_inference_data.emplace_back(1, layer->outputSize());
   m_hidden_layer.push_back(std::move(layer));
 }
 
@@ -24,8 +25,9 @@ void NeuralNetwork::addOutputLayer(std::unique_ptr<OutputLayer> output_layer) {
 	spdlog::error("layer size mismatch");
 	std::terminate();
   }
-  m_output_layer_data = LayerData(m_batch_size, output_layer->inputSize(),
-                                  output_layer->outputSize());
+  m_output_layer_data = LayerTrainData(m_batch_size, output_layer->inputSize(),
+                                       output_layer->outputSize());
+  m_output_layer_inference_data = Layer::Array(1, output_layer->outputSize());
   m_output_layer = std::move(output_layer);
 }
 
@@ -33,7 +35,7 @@ float NeuralNetwork::forward(const Layer::ConstArrayRef &input,
                              const Layer::ConstArrayRef &ground_truth,
                              bool train) {
   float loss = 0;
-  Layer::Array &y = m_hidden_layer_data[0].y;
+  Layer::ArrayRef y = m_hidden_layer_data[0].y;
   m_hidden_layer[0]->forward(y, input, train);
   for (size_t i = 1; i < m_hidden_layer.size(); i++) {
 	const Layer::ConstArrayRef &x = m_hidden_layer_data[i - 1].y;
@@ -49,16 +51,16 @@ float NeuralNetwork::forward(const Layer::ConstArrayRef &input,
          loss;
 }
 
-void NeuralNetwork::execute(Layer::ConstArrayRef input) {
-  Layer::Array &y = m_hidden_layer_data[0].y;
+void NeuralNetwork::inference(const Layer::ConstArrayRef &input) {
+  Layer::ArrayRef y = m_hidden_layer_inference_data[0];
   m_hidden_layer[0]->forward(y, input, false);
   for (size_t i = 1; i < m_hidden_layer.size(); i++) {
-	const Layer::ConstArrayRef &x = m_hidden_layer_data[i - 1].y;
-	Layer::ArrayRef y = m_hidden_layer_data[i].y;
+	const Layer::ConstArrayRef &x = m_hidden_layer_inference_data[i - 1];
+	Layer::ArrayRef y = m_hidden_layer_inference_data[i];
 	m_hidden_layer[i]->forward(y, x, false);
   }
-  m_output_layer->forward(m_output_layer_data.y, m_hidden_layer_data.back().y,
-                          false);
+  m_output_layer->forward(m_output_layer_inference_data,
+                          m_hidden_layer_inference_data.back(), false);
 }
 
 void NeuralNetwork::backward(const Layer::ConstArrayRef &input,
@@ -78,5 +80,9 @@ void NeuralNetwork::backward(const Layer::ConstArrayRef &input,
 
 const Layer::ConstArrayRef NeuralNetwork::y() {
   return Layer::ConstArrayRef(m_output_layer_data.y);
+}
+
+const Layer::ConstArrayRef NeuralNetwork::inference_result() {
+  return Layer::ConstArrayRef(m_output_layer_inference_data);
 }
 };  // namespace nn
