@@ -45,7 +45,9 @@ float NeuralNetwork::forward(const Layer::ConstArrayRef &input,
   }
   m_output_layer->forward(m_output_layer_data.y, m_hidden_layer_data.back().y,
                           train);
-  loss += m_output_layer->regularizationLoss();
+  if (train) {
+	loss += m_output_layer->regularizationLoss();
+  }
   return m_output_layer->loss(m_output_layer_data.dx, m_output_layer_data.y,
                               ground_truth) +
          loss;

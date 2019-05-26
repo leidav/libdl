@@ -5,8 +5,8 @@ BatchnormLayer::BatchnormLayer(int batch_size, int layer_size, float alpha)
       m_alpha(alpha),
       m_beta(Eigen::RowVectorXf::Zero(layer_size)),
       m_gamma(Eigen::RowVectorXf::Ones((layer_size))),
-      m_dbeta(layer_size),
-      m_dgamma(layer_size),
+      m_dbeta(Eigen::RowVectorXf::Zero(layer_size)),
+      m_dgamma(Eigen::RowVectorXf::Ones(layer_size)),
       m_batch_mean(layer_size),
       m_batch_var(layer_size),
       m_running_mean(Eigen::RowVectorXf::Zero(layer_size)),
@@ -23,14 +23,14 @@ void BatchnormLayer::forward(ArrayRef y, const ConstArrayRef &x, bool train) {
 	m_batch_mean = x.colwise().sum() / x.rows();
 	m_batch_var = (x.rowwise() - m_batch_mean.array()).colwise().squaredNorm();
 	m_running_mean = (1.0f - m_alpha) * m_running_mean + m_alpha * m_batch_mean;
-	m_running_var = m_alpha * m_running_var + (1 - m_alpha) * m_batch_var;
+	m_running_var = (1.0f - m_alpha) * m_running_var + m_alpha * m_batch_var;
 	m_x_hat = (x.rowwise() - m_batch_mean.array()).rowwise() *
-	          (m_batch_var.array() - eps).rsqrt().array();
+	          (m_batch_var.array() - eps).array().rsqrt();
 	y = (m_x_hat.rowwise() * m_gamma.array()).rowwise() + m_beta.array();
 
   } else {
-	y = ((x.rowwise() - m_running_mean.array()).rowwise() *
-	     (m_gamma.array() * m_running_var.array().rsqrt().array()))
+	y = (((x.rowwise() - m_running_mean.array()).rowwise() *
+	      ((m_running_var.array() - eps).array().rsqrt()) * m_gamma.array()))
 	        .rowwise() +
 	    m_beta.array();
   }
@@ -50,7 +50,7 @@ void BatchnormLayer::backward(ArrayRef dx, const ConstArrayRef &x,
   //	- x_hat*np.sum(dxhat*x_hat, axis=0))
   dx = ((dx_hat * batch_size).rowwise() - (dx_hat.colwise().sum())).rowwise() *
            ((1.0f / batch_size) * m_batch_var.array().inverse()) -
-       m_x_hat.rowwise() * (m_x_hat * dx_hat).square().colwise().sum();
+       m_x_hat.rowwise() * (m_x_hat * dx_hat).colwise().sum();
 }
 
 void BatchnormLayer::update(float learning_rate) {

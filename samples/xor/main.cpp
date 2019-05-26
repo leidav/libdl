@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
 
   nn::NeuralNetwork net(4);
   net.addHiddenLayer(std::make_unique<nn::FullyConnectedLayer>(2, 8, 1e-8f));
-  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(8));
-  net.addHiddenLayer(std::make_unique<nn::FullyConnectedLayer>(8, 1, 1e-8f));
+  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(16));
+  net.addHiddenLayer(std::make_unique<nn::FullyConnectedLayer>(16, 1, 1e-8f));
   net.addOutputLayer(std::make_unique<nn::LeastSquaresLayer>(1));
 
   nn::Layer::Array train_input = nn::Layer::Array(4, 2);
