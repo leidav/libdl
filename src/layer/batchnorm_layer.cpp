@@ -25,12 +25,12 @@ void BatchnormLayer::forward(ArrayRef y, const ConstArrayRef &x, bool train) {
 	m_running_mean = (1.0f - m_alpha) * m_running_mean + m_alpha * m_batch_mean;
 	m_running_var = (1.0f - m_alpha) * m_running_var + m_alpha * m_batch_var;
 	m_x_hat = (x.rowwise() - m_batch_mean.array()).rowwise() *
-	          (m_batch_var.array() - eps).array().rsqrt();
+	          (m_batch_var.array() + eps).array().rsqrt();
 	y = (m_x_hat.rowwise() * m_gamma.array()).rowwise() + m_beta.array();
 
   } else {
-	y = (((x.rowwise() - m_running_mean.array()).rowwise() *
-	      ((m_running_var.array() - eps).array().rsqrt()) * m_gamma.array()))
+	y = ((x.rowwise() - m_running_mean.array()).rowwise() *
+	     ((m_running_var.array() + eps).array().rsqrt() * m_gamma.array()))
 	        .rowwise() +
 	    m_beta.array();
   }
@@ -38,6 +38,7 @@ void BatchnormLayer::forward(ArrayRef y, const ConstArrayRef &x, bool train) {
 
 void BatchnormLayer::backward(ArrayRef dx, const ConstArrayRef &x,
                               const ConstArrayRef &y, const ConstArrayRef &dy) {
+  constexpr float eps = 1e-5f;
   // pre allocated temporary array
   static thread_local Layer::Array dx_hat(m_x_hat.rows(), m_x_hat.cols());
   float batch_size = static_cast<float>(x.rows());
@@ -49,7 +50,7 @@ void BatchnormLayer::backward(ArrayRef dx, const ConstArrayRef &x,
   // dx = (1. / N) * inv_var * (N*dxhat - np.sum(dxhat, axis=0)
   //	- x_hat*np.sum(dxhat*x_hat, axis=0))
   dx = ((dx_hat * batch_size).rowwise() - (dx_hat.colwise().sum())).rowwise() *
-           ((1.0f / batch_size) * m_batch_var.array().inverse()) -
+           ((1.0f / batch_size) * (m_batch_var.array() + eps).rsqrt()) -
        m_x_hat.rowwise() * (m_x_hat * dx_hat).colwise().sum();
 }
 

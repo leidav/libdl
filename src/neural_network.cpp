@@ -37,11 +37,16 @@ float NeuralNetwork::forward(const Layer::ConstArrayRef &input,
   float loss = 0;
   Layer::ArrayRef y = m_hidden_layer_data[0].y;
   m_hidden_layer[0]->forward(y, input, train);
+  if (train) {
+	loss += m_hidden_layer[0]->regularizationLoss();
+  }
   for (size_t i = 1; i < m_hidden_layer.size(); i++) {
 	const Layer::ConstArrayRef &x = m_hidden_layer_data[i - 1].y;
 	Layer::ArrayRef y = m_hidden_layer_data[i].y;
 	m_hidden_layer[i]->forward(y, x, train);
-	loss += m_hidden_layer[i]->regularizationLoss();
+	if (train) {
+		loss += m_hidden_layer[i]->regularizationLoss();
+	}
   }
   m_output_layer->forward(m_output_layer_data.y, m_hidden_layer_data.back().y,
                           train);

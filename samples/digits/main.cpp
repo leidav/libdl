@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <random>
 #include <type_traits>
 
@@ -146,17 +147,20 @@ int main(int argc, char* argv[]) {
   float l2_regularization = 1e-5f;
 
   net.addHiddenLayer(std::make_unique<nn::FullyConnectedLayer>(
-      image_size, 512, l2_regularization));
+      image_size, 1024, l2_regularization));
   net.addHiddenLayer(
-      std::make_unique<nn::BatchnormLayer>(mini_batch_size, 512));
-  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(512));
+      std::make_unique<nn::BatchnormLayer>(mini_batch_size, 1024));
+  net.addHiddenLayer(std::make_unique<nn::ReLULayer>(1024));
   //
   net.addHiddenLayer(
-      std::make_unique<nn::FullyConnectedLayer>(512, 256, l2_regularization));
+      std::make_unique<nn::FullyConnectedLayer>(1024, 256, l2_regularization));
   net.addHiddenLayer(
       std::make_unique<nn::BatchnormLayer>(mini_batch_size, 256));
   net.addHiddenLayer(std::make_unique<nn::ReLULayer>(256));
+  // net.addHiddenLayer(std::make_unique<nn::DropOutLayer>(mini_batch_size,
+  // 256));
   //
+
   net.addHiddenLayer(
       std::make_unique<nn::FullyConnectedLayer>(256, 128, l2_regularization));
   net.addHiddenLayer(std::make_unique<nn::ReLULayer>(128));
@@ -180,7 +184,7 @@ int main(int argc, char* argv[]) {
   std::random_device seed_generator;
   std::mt19937 mersenne_twister(seed_generator());
   std::uniform_int_distribution<uint32_t> int_distribution(0, train_size - 1);
-  for (int epoch = 0; epoch < 10000; epoch++) {
+  for (int epoch = 0; epoch < 100; epoch++) {
 	// permutate
 	for (int i = 0; i < indices.size(); i++) {
 		int a = int_distribution(mersenne_twister);
@@ -208,7 +212,11 @@ int main(int argc, char* argv[]) {
 		mini_batch_images.row(j) = test_images.row(index);
 		mini_batch_label.row(j) = test_labels.row(index);
 	  }
-	  test_loss += net.forward(mini_batch_images, mini_batch_label, false);
+	  float loss = net.forward(mini_batch_images, mini_batch_label, false);
+	  if (loss >= std::numeric_limits<float>::infinity()) {
+		printf("infinity in iteration i=%d\n", i);
+	  }
+	  test_loss += loss;
 	  const nn::Layer::ConstArrayRef& y = net.y();
 	  for (int k = 0; k < mini_batch_size; k++) {
 		int label = static_cast<int>(mini_batch_label(k, 0));
