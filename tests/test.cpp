@@ -196,6 +196,11 @@ TEST_CASE("Convolution Layer", "[conv]") {
 
   conv.backward(dx, x, output, dy);
   conv.update(1e-3f);
-  std::cout << "im2row:\n" << x << "\n" << std::endl;
+  std::cout << "conv:" << std::endl;
+  std::cout << "x:" << std::endl;
+  std::cout << x << std::endl;
+  std::cout << "output:" << std::endl;
   std::cout << output << std::endl;
+  std::cout << "dx:" << std::endl;
+  std::cout << dx << std::endl;
 }

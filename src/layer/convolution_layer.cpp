@@ -72,6 +72,9 @@ void ConvolutionLayer::backward(ArrayRef dx, const ConstArrayRef &x,
       dy.matrix().reshaped<Eigen::RowMajor>(image_size * y.rows(),
                                             m_dfilter.cols()) *
       m_filter.transpose();
+  convolution_helper::im2row_backward(
+      dx, m_im2row_dx, m_input_width, m_input_height, m_input_depth,
+      m_batch_size, m_kernel_size, m_padding, m_stride);
 }
 
 float ConvolutionLayer::regularizationLoss() {
