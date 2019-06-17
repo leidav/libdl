@@ -1,4 +1,4 @@
-#include "im2row.h"
+#include "convolution_helper.h"
 namespace nn {
 namespace convolution_helper {
 static void imageoutputSize(int &output_width, int &output_height,
@@ -90,12 +90,6 @@ void im2rowOutputSize(int &output_rows, int &output_cols, int image_width,
 
   output_cols = kernel_size * kernel_size * image_depth;
   output_rows = output_width * output_height * batch_size;
-}
-
-void imputImageArraySize(int &rows, int &cols, int image_width,
-                         int image_height, int num_channels, int batch_size) {
-  rows = image_width * image_height * batch_size;
-  cols = num_channels;
 }
 
 void im2rowFilterSize(int &rows, int &cols, int input_depth, int kernel_size,

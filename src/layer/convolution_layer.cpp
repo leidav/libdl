@@ -1,5 +1,5 @@
 #include "convolution_layer.h"
-#include <utils/im2row.h>
+#include <utils/convolution_helper.h>
 
 #include <cmath>
 #include <random>

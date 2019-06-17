@@ -12,7 +12,7 @@
 #include <layer/sigmoid_layer.h>
 #include <layer/softmax_layer.h>
 #include <neural_network.h>
-#include <utils/im2row.h>
+#include <utils/convolution_helper.h>
 
 #include <update_rule.h>
 
