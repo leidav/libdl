@@ -181,6 +181,7 @@ TEST_CASE("im2row", "[im2row]") {
   std::cout << "im2row:\n" << x << "\n" << std::endl;
   std::cout << output << std::endl;
 }
+
 TEST_CASE("Convolution Layer", "[conv]") {
   nn::Layer::Array x(2, 4 * 4 * 2);
   x << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -203,4 +204,56 @@ TEST_CASE("Convolution Layer", "[conv]") {
   std::cout << output << std::endl;
   std::cout << "dx:" << std::endl;
   std::cout << dx << std::endl;
+}
+
+TEST_CASE("maxPooling", "[maxpool]") {
+  nn::Layer::Array input(2, 6 * 6 * 2);
+  for (int batch = 0; batch < 2; batch++) {
+	for (int y = 0; y < 6; y++) {
+		for (int x = 0; x < 6; x++) {
+		for (int z = 0; z < 2; z++) {
+			int i = y * 12 + x * 2 + z;
+		  input(batch, i) = static_cast<float>(y * 6 + x);
+		}
+	  }
+	}
+  }
+  nn::Layer::Array output(2, 3 * 3 * 2);
+  nn::Layer::Array dx(2, 6 * 6 * 2);
+  nn::Layer::Array dy = nn::Layer::Array::Ones(2, 3 * 3 * 2);
+  std::vector<uint8_t> indices(2 * 3 * 3 * 2);
+  nn::convolution_helper::maxPooling(output, indices, input, 6, 6, 2, 2, 2);
+  nn::convolution_helper::maxPoolingBackward(dx, indices, dy, 6, 6, 2, 2, 2);
+  std::cout << "max pooling" << std::endl;
+  std::cout << "x:" << std::endl;
+  std::cout << input.reshaped<Eigen::RowMajor>(12, 12) << std::endl;
+  std::cout << "output:" << std::endl;
+  std::cout << output.reshaped<Eigen::RowMajor>(6, 6) << std::endl;
+  std::cout << "dx:" << std::endl;
+  std::cout << dx.reshaped<Eigen::RowMajor>(12, 12) << std::endl;
+}
+TEST_CASE("averagePooling", "[averagepool]") {
+  nn::Layer::Array input(2, 6 * 6 * 2);
+  for (int batch = 0; batch < 2; batch++) {
+	for (int y = 0; y < 6; y++) {
+		for (int x = 0; x < 6; x++) {
+		for (int z = 0; z < 2; z++) {
+			int i = y * 12 + x * 2 + z;
+		  input(batch, i) = static_cast<float>(y * 6 + x);
+		}
+	  }
+	}
+  }
+  nn::Layer::Array output(2, 3 * 3 * 2);
+  nn::Layer::Array dx(2, 6 * 6 * 2);
+  nn::Layer::Array dy = nn::Layer::Array::Ones(2, 3 * 3 * 2);
+  nn::convolution_helper::averagePooling(output, input, 6, 6, 2, 2, 2);
+  nn::convolution_helper::averagePoolingBackward(dx, dy, 6, 6, 2, 2, 2);
+  std::cout << "average pooling" << std::endl;
+  std::cout << "x:" << std::endl;
+  std::cout << input.reshaped<Eigen::RowMajor>(12, 12) << std::endl;
+  std::cout << "output:" << std::endl;
+  std::cout << output.reshaped<Eigen::RowMajor>(6, 6) << std::endl;
+  std::cout << "dx:" << std::endl;
+  std::cout << dx.reshaped<Eigen::RowMajor>(12, 12) << std::endl;
 }
