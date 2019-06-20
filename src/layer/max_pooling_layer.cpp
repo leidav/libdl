@@ -17,7 +17,8 @@ MaxPoolingLayer::MaxPoolingLayer(int input_image_width, int input_image_height,
       m_input_depth(input_image_depth),
       m_kernel_size(kernel_size),
       m_batch_size(batch_size),
-      m_indizes(output_image_width * output_image_height * input_image_depth) {}
+      m_indizes(m_batch_size * output_image_width * output_image_height *
+                input_image_depth) {}
 MaxPoolingLayer::~MaxPoolingLayer() {}
 
 void MaxPoolingLayer::forward(ArrayRef y, const ConstArrayRef &x, bool train) {

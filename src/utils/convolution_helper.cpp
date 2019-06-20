@@ -34,11 +34,13 @@ void im2row(Layer::ArrayRef out, const Layer::ConstArrayRef &in, int width,
 
   int image_size = width * height;
 
-  const Layer::ConstArrayRef &reshaped_in =
-      in.reshaped<Eigen::RowMajor>(image_size * batch_size, depth);
+  Eigen::Map<const Layer::Array> reshaped_in(in.data(), image_size * batch_size,
+                                             depth);
+  // const Layer::ConstArrayRef &reshaped_in =
+  //   in.reshaped<Eigen::RowMajor>(image_size * batch_size, depth);
 
   int rows = out.rows() / batch_size;
-  //#pragma omp parallel for
+#pragma omp parallel for
   for (int batch = 0; batch < batch_size; batch++) {
 	int image_offset = batch * image_size;
 	int output_x = 0;
@@ -48,11 +50,10 @@ void im2row(Layer::ArrayRef out, const Layer::ConstArrayRef &in, int width,
 		int col = 0;
 	  for (int y = y_offset; y < (y_offset + kernel_size); y++) {
 		for (int x = x_offset; x < (x_offset + kernel_size); x++) {
-			int i = image_offset + index(x, y);
-		  if ((x < 0) || (x >= output_width) || (y < 0) ||
-		      (y >= output_height)) {
+			if ((x < 0) || (x >= width) || (y < 0) || (y >= height)) {
 			out.block(batch * rows + row, col, 1, depth).setZero();
 		  } else {
+			int i = image_offset + index(x, y);
 			out.block(batch * rows + row, col, 1, depth) = reshaped_in.row(i);
 		  }
 		  col += depth;
@@ -141,7 +142,7 @@ void im2rowBackward(Layer::ArrayRef dx, const Layer::ConstArrayRef &dy,
 
   int rows = dy.rows() / batch_size;
 
-  //#pragma omp parallel for
+#pragma omp parallel for
   for (int batch = 0; batch < batch_size; batch++) {
 	int image_offset = batch * image_size;
 	int output_x = 0;
@@ -151,9 +152,8 @@ void im2rowBackward(Layer::ArrayRef dx, const Layer::ConstArrayRef &dy,
 		int col = 0;
 	  for (int y = y_offset; y < (y_offset + kernel_size); y++) {
 		for (int x = x_offset; x < (x_offset + kernel_size); x++) {
+			if ((x >= 0) && (x < width) && (y >= 0) && (y < height)) {
 			int i = image_offset + index(x, y);
-		  if ((x >= 0) && (x < output_width) && (y >= 0) &&
-		      (y < output_height)) {
 			reshaped_dx.row(i) += dy.block(batch * rows + row, col, 1, depth);
 		  }
 		  col += depth;
@@ -206,8 +206,10 @@ void maxPooling(Layer::ArrayRef out, std::vector<uint8_t> &indices,
 			  float max = out(batch, oi);
 			  if (val > max) {
 				out(batch, oi) = val;
-				// std::get<0>(indices[batch * output_size + oi]) = x -
-				// x_offset; std::get<1>(indices[batch * output_size + oi]) = y
+				// std::get<0>(indices[batch * output_size +
+				// oi]) = x - x_offset;
+				// std::get<1>(indices[batch * output_size +
+				// oi]) = y
 				// - y_offset;
 				uint8_t index = ((x - x_offset) << 4) | (0xF & (y - y_offset));
 				indices[batch * output_size + oi] = index;
@@ -249,8 +251,9 @@ void maxPoolingBackward(Layer::ArrayRef dx, std::vector<uint8_t> &indices,
 			uint8_t index = indices[batch * output_size + dyi];
 		  int x = static_cast<int>(index >> 4) + x_offset;
 		  int y = static_cast<int>(index & 0xF) + y_offset;
-		  // int x = std::get<0>(indices[batch * output_size + dyi]) + x_offset;
-		  // int y = std::get<1>(indices[batch * output_size + dyi]) + y_offset;
+		  // int x = std::get<0>(indices[batch * output_size + dyi]) +
+		  // x_offset; int y = std::get<1>(indices[batch * output_size
+		  // + dyi]) + y_offset;
 		  dx(batch, input_index(x, y, z)) = dy(batch, dyi);
 		  dyi++;
 		}

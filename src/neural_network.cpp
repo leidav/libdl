@@ -1,6 +1,8 @@
 #include "neural_network.h"
 #include <spdlog/spdlog.h>
 
+#include <iostream>
+
 namespace nn {
 
 NeuralNetwork::NeuralNetwork(int batch_size) : m_batch_size(batch_size) {}
@@ -72,7 +74,7 @@ void NeuralNetwork::inference(const Layer::ConstArrayRef &input) {
 
 void NeuralNetwork::backward(const Layer::ConstArrayRef &input,
                              float learning_rate) {
-  for (size_t i = m_hidden_layer.size() - 1; i != 0; i--) {
+  for (int i = m_hidden_layer.size() - 1; i >= 0; i--) {
 	const Layer::ConstArrayRef &dy = (i == m_hidden_layer.size() - 1)
 	                                     ? m_output_layer_data.dx
 	                                     : m_hidden_layer_data[i + 1].dx;

@@ -32,6 +32,7 @@ add_subdirectory(extern/pybind11)
 add_subdirectory(src)
 add_subdirectory(samples/xor)
 add_subdirectory(samples/digits)
+add_subdirectory(samples/digits_cnn)
 
 add_subdirectory(extern/Catch2)
 add_subdirectory(tests)

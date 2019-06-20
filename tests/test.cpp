@@ -171,15 +171,21 @@ TEST_CASE("im2row", "[im2row]") {
       21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 101, 102, 103, 104, 105,
       106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
       121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132;
+
+  nn::Layer::Array dx(2, 32);
   int matrix_width;
   int matrix_height;
-  int padding = nn::convolution_helper::padding(3, 1);
+  int padding = nn::convolution_helper::padding(3, true);
   nn::convolution_helper::im2rowOutputSize(matrix_height, matrix_width, 4, 4, 2,
                                            2, 3, padding, 1);
   nn::Layer::Array output(matrix_height, matrix_width);
+  nn::Layer::Array dy = nn::Layer::Array::Ones(matrix_height, matrix_width);
   nn::convolution_helper::im2row(output, x, 4, 4, 2, 2, 3, padding, 1);
+  nn::convolution_helper::im2rowBackward(dx, dy, 4, 4, 2, 2, 3, padding, 1);
   std::cout << "im2row:\n" << x << "\n" << std::endl;
   std::cout << output << std::endl;
+  std::cout << "dx:" << std::endl;
+  std::cout << dx << std::endl;
 }
 
 TEST_CASE("Convolution Layer", "[conv]") {
@@ -194,7 +200,6 @@ TEST_CASE("Convolution Layer", "[conv]") {
   nn::Layer::Array dy = nn::Layer::Array::Ones(2, 4 * 4 * 8);
   nn::ConvolutionLayer conv(4, 4, 2, 4, 4, 8, 3, 2, padding, 1);
   conv.forward(output, x, true);
-
   conv.backward(dx, x, output, dy);
   conv.update(1e-3f);
   std::cout << "conv:" << std::endl;

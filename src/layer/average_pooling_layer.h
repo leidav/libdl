@@ -1,5 +1,5 @@
-#ifndef CONVOLUTION_LAYER_H
-#define CONVOLUTION_LAYER_H
+#ifndef AVERAGE_POOLING_LAYER_H
+#define AVERAGE_POOLING_LAYER_H
 
 #include "layer.h"
 
