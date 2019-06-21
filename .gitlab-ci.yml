@@ -1,8 +1,8 @@
 image: elsa/ubu18-clang6:latest
 
 before_script:
-  - apt-get update
-  - apt-get install libopencv-dev
+  - apt-get update -y
+  - apt-get install -y libopencv-dev
 
 stages:
   - compile
