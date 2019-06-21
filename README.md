@@ -19,7 +19,7 @@ Both example programs require OpenCV to display test images.
 The fetch_data script downloads the datasets from http://yann.lecun.com/exdb/mnist/
 and extracts them in the current directory. If you download them yourself make sure to
 pass the download directory as argument.
-Both sample programs train the network until it has an accuracy of 97% and at most for 10 epochs.
+Both sample programs train the network until it has an accuracy of 97% and at most for 10 epochs. If you wonder why the test loss is smaler than the train loss. Its because of the 50% dropout during training.
 
 Example1:
 
