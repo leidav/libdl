@@ -24,11 +24,15 @@ Both sample programs train the network until it has an accuracy of 97% and at mo
 Example1:
 
 `> cd build/samples/digits/`
+
 `> ./fetch_data.sh/`
+
 `> ./digits ./`
 
 Example2:
 
 `> cd build/samples/digits_cnn/`
+
 `> ./fetch_data.sh/`
+
 `> ./digits_cnn ./`
