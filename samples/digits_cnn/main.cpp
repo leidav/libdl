@@ -17,6 +17,8 @@
 #include <random>
 #include <type_traits>
 
+#include <opencv2/highgui.hpp>
+
 static uint32_t swapEndian(uint32_t integer) {
   uint32_t tmp = ((integer >> 24) & 0x000000FF);
   tmp |= ((integer >> 8) & 0x0000FF00);
@@ -213,10 +215,13 @@ int main(int argc, char* argv[]) {
 	indices[i] = i;
   }
 
+  printf("Start Training...\n");
+  fflush(stdout);
+
   std::random_device seed_generator;
   std::mt19937 mersenne_twister(seed_generator());
   std::uniform_int_distribution<uint32_t> int_distribution(0, train_size - 1);
-  for (int epoch = 0; epoch < 10000; epoch++) {
+  for (int epoch = 0; epoch < 10; epoch++) {
 	// permutate
 	for (int i = 0; i < indices.size(); i++) {
 		int a = int_distribution(mersenne_twister);
@@ -246,9 +251,8 @@ int main(int argc, char* argv[]) {
 		mini_batch_label.row(j) = test_labels.row(index);
 	  }
 	  float loss = net.forward(mini_batch_images, mini_batch_label, false);
-	  if (loss >= std::numeric_limits<float>::infinity()) {
-		printf("infinity in iteration i=%d\n", i);
-	  }
+
+	  // calculate accuracy
 	  test_loss += loss;
 	  const nn::Layer::ConstArrayRef& y = net.y();
 	  for (int k = 0; k < mini_batch_size; k++) {
@@ -267,6 +271,31 @@ int main(int argc, char* argv[]) {
 	       accuracy, train_loss, test_loss);
 	fflush(stdout);
 	//}
+	if (accuracy >= 97.0f) {
+		break;
+	}
+  }
+  printf("show 10 random test images their value\n");
+  std::uniform_int_distribution<uint32_t> test_distribution(0, test_size - 1);
+  for (int j = 0; j < mini_batch_size; j++) {
+	int index = test_distribution(mersenne_twister);
+	mini_batch_images.row(j) = test_images.row(index);
+	mini_batch_label.row(j) = test_labels.row(index);
+  }
+  float loss = net.forward(mini_batch_images, mini_batch_label, false);
+
+  for (int i = 0; i < 10; i++) {
+	const cv::Mat img(cv::Size(28, 28), CV_32F,
+	                  mini_batch_images.row(i).data());
+	cv::namedWindow("digit", cv::WINDOW_NORMAL);
+	cv::resizeWindow("digit", 280, 280);
+	cv::imshow("digit", img);
+	int max;
+	net.y().row(i).maxCoeff(&max);
+	int ground_truth = mini_batch_label(i, 0);
+	printf("result: %d, ground truth: %d\n", max, ground_truth);
+	fflush(stdout);
+	cv::waitKey(0);
   }
 
   return 0;

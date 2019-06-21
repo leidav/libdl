@@ -25,6 +25,7 @@ endif()
 
 
 find_package(OpenMP REQUIRED)
+find_package(OpenCV REQUIRED)
 
 add_subdirectory(extern/eigen)
 add_subdirectory(extern/spdlog)
