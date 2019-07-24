@@ -1,5 +1,5 @@
 #include "average_pooling_layer.h"
-#include <utils/convolution_helper.h>
+#include <utils/convolution_helper/convolution_helper.h>
 
 #include <cmath>
 #include <random>
@@ -23,16 +23,16 @@ AveragePoolingLayer::~AveragePoolingLayer() {}
 
 void AveragePoolingLayer::forward(ArrayRef y, const ConstArrayRef &x,
                                   bool train) {
-  convolution_helper::averagePooling(y, x, m_input_width, m_input_height,
-                                     m_input_depth, m_batch_size,
-                                     m_kernel_size);
+  utils::convolution_helper::averagePooling(y, x, m_input_width, m_input_height,
+                                            m_input_depth, m_batch_size,
+                                            m_kernel_size);
 }
 
 void AveragePoolingLayer::backward(ArrayRef dx, const ConstArrayRef &x,
                                    const ConstArrayRef &y,
                                    const ConstArrayRef &dy) {
-  convolution_helper::averagePoolingBackward(dx, dy, m_input_width,
-                                             m_input_height, m_input_depth,
-                                             m_batch_size, m_kernel_size);
+  utils::convolution_helper::averagePoolingBackward(
+      dx, dy, m_input_width, m_input_height, m_input_depth, m_batch_size,
+      m_kernel_size);
 }
 };  // namespace nn

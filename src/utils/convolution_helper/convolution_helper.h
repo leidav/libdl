@@ -2,6 +2,7 @@
 #define IM2ROW_H
 #include "layer/layer.h"
 namespace nn {
+namespace utils {
 namespace convolution_helper {
 
 int im2rowOutputRows(int image_width, int image_height, int image_depth,
@@ -17,6 +18,7 @@ void im2rowOutputSize(int &output_rows, int &output_cols, int image_width,
 void im2row(Layer::ArrayRef out, const Layer::ConstArrayRef &in, int width,
             int height, int depth, int batch_size, int kernel_size, int padding,
             int stride);
+
 void im2rowBackward(Layer::ArrayRef dx, const Layer::ConstArrayRef &dy,
                     int width, int height, int depth, int batch_size,
                     int kernel_size, int padding, int stride);
@@ -56,6 +58,7 @@ void averagePoolingBackward(Layer::ArrayRef dx, const Layer::ConstArrayRef &dy,
                             int kernel_size);
 
 };  // namespace convolution_helper
+};  // namespace utils
 };  // namespace nn
 
 #endif

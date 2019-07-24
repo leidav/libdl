@@ -1,5 +1,5 @@
 #include "max_pooling_layer.h"
-#include <utils/convolution_helper.h>
+#include <utils/convolution_helper/convolution_helper.h>
 
 #include <cmath>
 #include <random>
@@ -22,15 +22,16 @@ MaxPoolingLayer::MaxPoolingLayer(int input_image_width, int input_image_height,
 MaxPoolingLayer::~MaxPoolingLayer() {}
 
 void MaxPoolingLayer::forward(ArrayRef y, const ConstArrayRef &x, bool train) {
-  convolution_helper::maxPooling(y, m_indizes, x, m_input_width, m_input_height,
-                                 m_input_depth, m_batch_size, m_kernel_size);
+  utils::convolution_helper::maxPooling(y, m_indizes, x, m_input_width,
+                                        m_input_height, m_input_depth,
+                                        m_batch_size, m_kernel_size);
 }
 
 void MaxPoolingLayer::backward(ArrayRef dx, const ConstArrayRef &x,
                                const ConstArrayRef &y,
                                const ConstArrayRef &dy) {
-  convolution_helper::maxPoolingBackward(dx, m_indizes, dy, m_input_width,
-                                         m_input_height, m_input_depth,
-                                         m_batch_size, m_kernel_size);
+  utils::convolution_helper::maxPoolingBackward(
+      dx, m_indizes, dy, m_input_width, m_input_height, m_input_depth,
+      m_batch_size, m_kernel_size);
 }
 };  // namespace nn

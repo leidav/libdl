@@ -12,7 +12,7 @@
 #include <layer/sigmoid_layer.h>
 #include <layer/softmax_layer.h>
 #include <neural_network.h>
-#include <utils/convolution_helper.h>
+#include <utils/convolution_helper/convolution_helper.h>
 
 #include <update_rule.h>
 
@@ -175,13 +175,14 @@ TEST_CASE("im2row", "[im2row]") {
   nn::Layer::Array dx(2, 32);
   int matrix_width;
   int matrix_height;
-  int padding = nn::convolution_helper::padding(3, true);
-  nn::convolution_helper::im2rowOutputSize(matrix_height, matrix_width, 4, 4, 2,
-                                           2, 3, padding, 1);
+  int padding = nn::utils::convolution_helper::padding(3, true);
+  nn::utils::convolution_helper::im2rowOutputSize(matrix_height, matrix_width,
+                                                  4, 4, 2, 2, 3, padding, 1);
   nn::Layer::Array output(matrix_height, matrix_width);
   nn::Layer::Array dy = nn::Layer::Array::Ones(matrix_height, matrix_width);
-  nn::convolution_helper::im2row(output, x, 4, 4, 2, 2, 3, padding, 1);
-  nn::convolution_helper::im2rowBackward(dx, dy, 4, 4, 2, 2, 3, padding, 1);
+  nn::utils::convolution_helper::im2row(output, x, 4, 4, 2, 2, 3, padding, 1);
+  nn::utils::convolution_helper::im2rowBackward(dx, dy, 4, 4, 2, 2, 3, padding,
+                                                1);
   std::cout << "im2row:\n" << x << "\n" << std::endl;
   std::cout << output << std::endl;
   std::cout << "dx:" << std::endl;
@@ -195,7 +196,7 @@ TEST_CASE("Convolution Layer", "[conv]") {
       106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
       121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132;
   nn::Layer::Array dx(2, 4 * 4 * 2);
-  int padding = nn::convolution_helper::padding(3, 1);
+  int padding = nn::utils::convolution_helper::padding(3, 1);
   nn::Layer::Array output(2, 4 * 4 * 8);
   nn::Layer::Array dy = nn::Layer::Array::Ones(2, 4 * 4 * 8);
   nn::ConvolutionLayer conv(4, 4, 2, 4, 4, 8, 3, 2, padding, 1);
@@ -227,8 +228,10 @@ TEST_CASE("maxPooling", "[maxpool]") {
   nn::Layer::Array dx(2, 6 * 6 * 2);
   nn::Layer::Array dy = nn::Layer::Array::Ones(2, 3 * 3 * 2);
   std::vector<uint8_t> indices(2 * 3 * 3 * 2);
-  nn::convolution_helper::maxPooling(output, indices, input, 6, 6, 2, 2, 2);
-  nn::convolution_helper::maxPoolingBackward(dx, indices, dy, 6, 6, 2, 2, 2);
+  nn::utils::convolution_helper::maxPooling(output, indices, input, 6, 6, 2, 2,
+                                            2);
+  nn::utils::convolution_helper::maxPoolingBackward(dx, indices, dy, 6, 6, 2, 2,
+                                                    2);
   std::cout << "max pooling" << std::endl;
   std::cout << "x:" << std::endl;
   std::cout << input.reshaped<Eigen::RowMajor>(12, 12) << std::endl;
@@ -252,8 +255,8 @@ TEST_CASE("averagePooling", "[averagepool]") {
   nn::Layer::Array output(2, 3 * 3 * 2);
   nn::Layer::Array dx(2, 6 * 6 * 2);
   nn::Layer::Array dy = nn::Layer::Array::Ones(2, 3 * 3 * 2);
-  nn::convolution_helper::averagePooling(output, input, 6, 6, 2, 2, 2);
-  nn::convolution_helper::averagePoolingBackward(dx, dy, 6, 6, 2, 2, 2);
+  nn::utils::convolution_helper::averagePooling(output, input, 6, 6, 2, 2, 2);
+  nn::utils::convolution_helper::averagePoolingBackward(dx, dy, 6, 6, 2, 2, 2);
   std::cout << "average pooling" << std::endl;
   std::cout << "x:" << std::endl;
   std::cout << input.reshaped<Eigen::RowMajor>(12, 12) << std::endl;

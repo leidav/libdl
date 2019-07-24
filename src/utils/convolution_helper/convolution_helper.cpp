@@ -4,6 +4,7 @@
 #include <limits>
 
 namespace nn {
+namespace utils {
 namespace convolution_helper {
 int imageoutputWidth(int input_width, int input_height, int kernel_size,
                      int padding, int stride) {
@@ -102,8 +103,8 @@ void im2rowOutputSize(int &output_rows, int &output_cols, int image_width,
   output_rows = output_width * output_height * batch_size;
 }
 
-void im2rowFilterSize(int &rows, int &cols, int input_depth, int kernel_size,
-                      int num_kernels) {
+void filterSize(int &rows, int &cols, int input_depth, int kernel_size,
+                int num_kernels) {
   rows = filterRows(input_depth, kernel_size, num_kernels);
   cols = filterCols(input_depth, kernel_size, num_kernels);
 }
@@ -336,4 +337,5 @@ void averagePoolingBackward(Layer::ArrayRef dx, const Layer::ConstArrayRef &dy,
 }
 
 };  // namespace convolution_helper
+};  // namespace utils
 };  // namespace nn

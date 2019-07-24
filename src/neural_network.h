@@ -21,9 +21,9 @@ class NeuralNetwork {
 
   ~NeuralNetwork();
 
-  void addHiddenLayer(std::unique_ptr<Layer> layer);
+  void addHiddenLayer(std::shared_ptr<Layer> layer);
 
-  void addOutputLayer(std::unique_ptr<OutputLayer> output_layer);
+  void addOutputLayer(std::shared_ptr<OutputLayer> output_layer);
 
   float forward(const Layer::ConstArrayRef& input,
                 const Layer::ConstArrayRef& ground_truth, bool train);
@@ -37,8 +37,8 @@ class NeuralNetwork {
 
  private:
   int m_batch_size;
-  std::vector<std::unique_ptr<Layer>> m_hidden_layer;
-  std::unique_ptr<OutputLayer> m_output_layer;
+  std::vector<std::shared_ptr<Layer>> m_hidden_layer;
+  std::shared_ptr<OutputLayer> m_output_layer;
   std::vector<LayerTrainData> m_hidden_layer_data;
   LayerTrainData m_output_layer_data;
   std::vector<Layer::Array> m_hidden_layer_inference_data;

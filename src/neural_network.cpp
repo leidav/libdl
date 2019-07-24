@@ -9,7 +9,7 @@ NeuralNetwork::NeuralNetwork(int batch_size) : m_batch_size(batch_size) {}
 
 NeuralNetwork::~NeuralNetwork() {}
 
-void NeuralNetwork::addHiddenLayer(std::unique_ptr<Layer> layer) {
+void NeuralNetwork::addHiddenLayer(std::shared_ptr<Layer> layer) {
   if ((m_hidden_layer.size() > 0) &&
       (m_hidden_layer.back()->outputSize() != layer->inputSize())) {
 	spdlog::error("layer size mismatch");
@@ -18,10 +18,11 @@ void NeuralNetwork::addHiddenLayer(std::unique_ptr<Layer> layer) {
   m_hidden_layer_data.emplace_back(m_batch_size, layer->inputSize(),
                                    layer->outputSize());
   m_hidden_layer_inference_data.emplace_back(1, layer->outputSize());
-  m_hidden_layer.push_back(std::move(layer));
+  m_hidden_layer.push_back(layer);
+  //  m_hidden_layer.push_back(std::move(layer));
 }
 
-void NeuralNetwork::addOutputLayer(std::unique_ptr<OutputLayer> output_layer) {
+void NeuralNetwork::addOutputLayer(std::shared_ptr<OutputLayer> output_layer) {
   if ((m_hidden_layer.size() > 0) &&
       (m_hidden_layer.back()->outputSize() != output_layer->inputSize())) {
 	spdlog::error("layer size mismatch");
@@ -30,7 +31,8 @@ void NeuralNetwork::addOutputLayer(std::unique_ptr<OutputLayer> output_layer) {
   m_output_layer_data = LayerTrainData(m_batch_size, output_layer->inputSize(),
                                        output_layer->outputSize());
   m_output_layer_inference_data = Layer::Array(1, output_layer->outputSize());
-  m_output_layer = std::move(output_layer);
+  m_output_layer = output_layer;
+  // m_output_layer = std::move(output_layer);
 }
 
 float NeuralNetwork::forward(const Layer::ConstArrayRef &input,

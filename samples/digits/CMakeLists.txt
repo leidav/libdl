@@ -2,9 +2,8 @@ add_executable(digits)
 target_sources(digits PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 
 target_compile_features(digits PUBLIC cxx_std_17)
-target_link_libraries(digits PUBLIC ${OpenCV_LIBS} dl)
+target_link_libraries(digits PUBLIC dl)
 target_include_directories(digits PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(digits PUBLIC ${OpenCV_INCLUDE_DIRS})
 
 #optimizations
 target_compile_options(digits PUBLIC "-march=native")

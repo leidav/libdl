@@ -4,6 +4,7 @@
 #include <layer/relu_layer.h>
 #include <layer/softmax_layer.h>
 #include <neural_network.h>
+#include <utils/mnist/mnist_loader.h>
 
 #include <algorithm>
 #include <cstddef>
@@ -12,96 +13,6 @@
 #include <limits>
 #include <random>
 #include <type_traits>
-
-#include <opencv2/highgui.hpp>
-
-static uint32_t swapEndian(uint32_t integer) {
-  uint32_t tmp = ((integer >> 24) & 0x000000FF);
-  tmp |= ((integer >> 8) & 0x0000FF00);
-  tmp |= ((integer << 8) & 0x00FF0000);
-  tmp |= ((integer << 24) & 0xFF000000);
-  return tmp;
-}
-static int loadImages(nn::Layer::Array& images, const char* path) {
-  std::FILE* file = std::fopen(path, "rb");
-  if (file == nullptr) {
-	return -1;
-  }
-  uint32_t magic_number = 0;
-  uint32_t image_count;
-  uint32_t width;
-  uint32_t height;
-  if ((std::fread(&magic_number, sizeof(magic_number), 1, file) != 1) ||
-      (std::fread(&image_count, sizeof(image_count), 1, file) != 1) ||
-      (std::fread(&width, sizeof(width), 1, file) != 1) ||
-      (std::fread(&height, sizeof(height), 1, file) != 1)) {
-	fclose(file);
-	return -1;
-  }
-  magic_number = swapEndian(magic_number);
-  image_count = swapEndian(image_count);
-  width = swapEndian(width);
-  height = swapEndian(height);
-
-  if (magic_number != 0x803) {
-	fclose(file);
-	return -1;
-  }
-
-  size_t image_size = width * height;
-  size_t buffer_size = image_count * image_size;
-  uint8_t* buffer = new uint8_t[buffer_size];
-  if (fread(buffer, 1, buffer_size, file) != buffer_size) {
-	fclose(file);
-	return -1;
-  }
-  images = nn::Layer::Array(image_count, image_size);
-
-  for (int i = 0; i < image_count; i++) {
-	for (int j = 0; j < image_size; j++) {
-		images(i, j) = static_cast<float>(buffer[i * image_size + j]) / 255.0f;
-	}
-  }
-  delete[] buffer;
-  fclose(file);
-
-  return 0;
-}
-
-static int loadLabels(nn::Layer::Array& labels, const char* path) {
-  std::FILE* file = std::fopen(path, "rb");
-  if (file == nullptr) {
-	return -1;
-  }
-  uint32_t magic_number;
-  uint32_t label_count;
-  if ((std::fread(&magic_number, sizeof(magic_number), 1, file) != 1) ||
-      (std::fread(&label_count, sizeof(label_count), 1, file) != 1)) {
-	fclose(file);
-	return -1;
-  }
-  magic_number = swapEndian(magic_number);
-  label_count = swapEndian(label_count);
-
-  if (magic_number != 0x801) {
-	fclose(file);
-	return -1;
-  }
-  uint8_t* buffer = new uint8_t[label_count];
-  if (fread(buffer, 1, label_count, file) != label_count) {
-	fclose(file);
-	return -1;
-  }
-  labels = nn::Layer::Array(label_count, 1);
-
-  for (int i = 0; i < label_count; i++) {
-	labels(i, 0) = static_cast<float>(buffer[i]);
-  }
-  delete[] buffer;
-  fclose(file);
-
-  return 0;
-}
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
@@ -123,10 +34,14 @@ int main(int argc, char* argv[]) {
   nn::Layer::Array train_labels;
   nn::Layer::Array test_images;
   nn::Layer::Array test_labels;
-  if ((loadImages(train_images, train_images_path.c_str()) != 0) ||
-      (loadLabels(train_labels, train_labels_path.c_str()) != 0) ||
-      (loadImages(test_images, test_images_path.c_str()) != 0) ||
-      (loadLabels(test_labels, test_labels_path.c_str()) != 0)) {
+  if ((nn::utils::mnist::loadImages(train_images, train_images_path.c_str()) !=
+       0) ||
+      (nn::utils::mnist::loadLabels(train_labels, train_labels_path.c_str()) !=
+       0) ||
+      (nn::utils::mnist::loadImages(test_images, test_images_path.c_str()) !=
+       0) ||
+      (nn::utils::mnist::loadLabels(test_labels, test_labels_path.c_str()) !=
+       0)) {
 	exit(1);
   }
   int mini_batch_size = 30;
@@ -253,17 +168,11 @@ int main(int argc, char* argv[]) {
   float loss = net.forward(mini_batch_images, mini_batch_label, false);
 
   for (int i = 0; i < 10; i++) {
-	const cv::Mat img(cv::Size(28, 28), CV_32F,
-	                  mini_batch_images.row(i).data());
-	cv::namedWindow("digit", cv::WINDOW_NORMAL);
-	cv::resizeWindow("digit", 280, 280);
-	cv::imshow("digit", img);
 	int max;
 	net.y().row(i).maxCoeff(&max);
 	int ground_truth = mini_batch_label(i, 0);
 	printf("result: %d, ground truth: %d\n", max, ground_truth);
 	fflush(stdout);
-	cv::waitKey(0);
   }
 
   return 0;

@@ -1,5 +1,5 @@
 #include "convolution_layer.h"
-#include <utils/convolution_helper.h>
+#include <utils/convolution_helper/convolution_helper.h>
 #include <iostream>
 
 #include <cmath>
@@ -23,17 +23,17 @@ ConvolutionLayer::ConvolutionLayer(
       m_padding(padding),
       m_stride(stride),
       m_batch_size(batch_size),
-      m_im2row_x(convolution_helper::im2rowOutputRows(
+      m_im2row_x(utils::convolution_helper::im2rowOutputRows(
                      input_image_width, input_image_height, input_image_depth,
                      batch_size, kernel_size, padding, stride),
-                 convolution_helper::im2rowOutputCols(
+                 utils::convolution_helper::im2rowOutputCols(
                      input_image_width, input_image_height, input_image_depth,
                      batch_size, kernel_size, padding, stride)),
       m_im2row_dx(m_im2row_x.rows(), m_im2row_x.cols()),
-      m_filter(convolution_helper::filterRows(input_image_depth, kernel_size,
-                                              output_image_depth),
-               convolution_helper::filterCols(input_image_depth, kernel_size,
-                                              output_image_depth)),
+      m_filter(utils::convolution_helper::filterRows(
+                   input_image_depth, kernel_size, output_image_depth),
+               utils::convolution_helper::filterCols(
+                   input_image_depth, kernel_size, output_image_depth)),
       m_bias_weights(output_image_depth),
       m_dfilter(m_filter.rows(), m_filter.cols()),
       m_db(m_bias_weights.rows()),
@@ -52,9 +52,9 @@ ConvolutionLayer::ConvolutionLayer(
 ConvolutionLayer::~ConvolutionLayer() {}
 
 void ConvolutionLayer::forward(ArrayRef y, const ConstArrayRef &x, bool train) {
-  convolution_helper::im2row(m_im2row_x, x, m_input_width, m_input_height,
-                             m_input_depth, m_batch_size, m_kernel_size,
-                             m_padding, m_stride);
+  utils::convolution_helper::im2row(m_im2row_x, x, m_input_width,
+                                    m_input_height, m_input_depth, m_batch_size,
+                                    m_kernel_size, m_padding, m_stride);
   int output_image_size = y.cols() / m_dfilter.cols();
   Eigen::Map<Array> y_reshaped(y.data(), m_batch_size * output_image_size,
                                m_filter.cols());
@@ -76,7 +76,7 @@ void ConvolutionLayer::backward(ArrayRef dx, const ConstArrayRef &x,
   m_dfilter += m_regularization_factor * m_filter;
   m_db = dy_reshaped.colwise().sum();
   m_im2row_dx = dy_reshaped.matrix() * m_filter.transpose();
-  convolution_helper::im2rowBackward(
+  utils::convolution_helper::im2rowBackward(
       dx, m_im2row_dx, m_input_width, m_input_height, m_input_depth,
       m_batch_size, m_kernel_size, m_padding, m_stride);
 }

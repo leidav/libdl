@@ -25,17 +25,20 @@ endif()
 
 
 find_package(OpenMP REQUIRED)
-find_package(OpenCV REQUIRED)
 
 add_subdirectory(extern/eigen)
 add_subdirectory(extern/spdlog)
 add_subdirectory(extern/pybind11)
+add_subdirectory(extern/Catch2)
+
 add_subdirectory(src)
+add_subdirectory(bindings)
+
 add_subdirectory(samples/xor)
 add_subdirectory(samples/digits)
 add_subdirectory(samples/digits_cnn)
+add_subdirectory(samples/python/digits)
 
-add_subdirectory(extern/Catch2)
 add_subdirectory(tests)
 
 
