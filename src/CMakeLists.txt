@@ -2,8 +2,8 @@ add_library(dl)
 target_sources(dl PUBLIC
 	                    "${CMAKE_CURRENT_SOURCE_DIR}/neural_network.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/neural_network.cpp"
-						"${CMAKE_CURRENT_SOURCE_DIR}/solver.h"
-						"${CMAKE_CURRENT_SOURCE_DIR}/solver.cpp"
+						#"${CMAKE_CURRENT_SOURCE_DIR}/solver.h"
+						#"${CMAKE_CURRENT_SOURCE_DIR}/solver.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/update_rule.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/utils/convolution_helper/convolution_helper.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/utils/convolution_helper/convolution_helper.cpp"
