@@ -1,5 +1,5 @@
 #ifndef MAX_POOLING_LAYER_H
-#define MAY_POOLING_LAYER_H
+#define MAX_POOLING_LAYER_H
 
 #include "layer.h"
 

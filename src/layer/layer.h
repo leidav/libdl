@@ -8,7 +8,7 @@ namespace nn {
 class Layer {
  public:
   Layer(int input_size, int output_size);
-  virtual ~Layer();
+  virtual ~Layer() = default;
   using Array =
       Eigen::Array<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
   using ArrayRef = Eigen::Ref<Array>;
@@ -33,7 +33,7 @@ class Layer {
 class OutputLayer : public Layer {
  public:
   OutputLayer(int input_size, int output_size);
-  virtual ~OutputLayer();
+  virtual ~OutputLayer() = default;
 
   void backward(ArrayRef dx, const ConstArrayRef& x, const ConstArrayRef& y,
                 const ConstArrayRef& dy) final;
