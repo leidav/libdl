@@ -17,5 +17,11 @@ void SigmoidLayer::backward(ArrayRef dx, const ConstArrayRef& x,
                             const ConstArrayRef& y, const ConstArrayRef& dy) {
   dx = (y * (1 - y)) * dy;
 }
+uint64_t SigmoidLayer::id() { return layerNameHash("SigmoidLayer"); }
+int SigmoidLayer::paramCount() { return 0; }
+
+Layer::ArrayRef SigmoidLayer::param(int param) {
+  return Eigen::Map<Array>(nullptr, 0, 0);
+}
 
 };  // namespace nn

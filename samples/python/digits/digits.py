@@ -1,3 +1,4 @@
+#!/bin/env python
 import pydl
 from pydl import utils
 import sys
@@ -28,6 +29,7 @@ def main():
     mini_batch_images=np.zeros((mini_batch_size, image_size))
     mini_batch_labels=np.zeros((mini_batch_size, 1))
     net = pydl.NeuralNetwork(mini_batch_size)
+    net.openSaveFile("test.save")
 
     net.addHiddenLayer(pydl.FullyConnectedLayer(image_size, 1024, l2_regularization))
     net.addHiddenLayer(pydl.BatchnormLayer(mini_batch_size, 1024))
@@ -78,6 +80,7 @@ def main():
         accuracy = (accuracy/test_size)*100
         print(f"epoch:{epoch}, accuracy:{accuracy}, train loss:{train_loss}, "
               f"test_loss: {test_loss}")
+        net.saveParameters()
         if accuracy>97:
             break
 

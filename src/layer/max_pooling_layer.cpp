@@ -34,4 +34,12 @@ void MaxPoolingLayer::backward(ArrayRef dx, const ConstArrayRef &x,
       dx, m_indizes, dy, m_input_width, m_input_height, m_input_depth,
       m_batch_size, m_kernel_size);
 }
+uint64_t MaxPoolingLayer::id() { return layerNameHash("MaxPoolingLayer"); }
+
+int MaxPoolingLayer::paramCount() { return 0; }
+
+Layer::ArrayRef MaxPoolingLayer::param(int param) {
+  return Eigen::Map<Array>(nullptr, 0, 0);
+}
+
 };  // namespace nn

@@ -27,5 +27,12 @@ float LeastSquaresLayer::loss(ArrayRef dx, const ConstArrayRef &x,
   dx = 2 * (x - ground_truth);
   return m_loss;
 }
+uint64_t LeastSquaresLayer::id() { return layerNameHash("LeastSquaresLayer"); }
+
+int LeastSquaresLayer::paramCount() { return 0; }
+
+Layer::ArrayRef LeastSquaresLayer::param(int param) {
+  return Eigen::Map<Array>(nullptr, 0, 0);
+}
 
 };  // namespace nn

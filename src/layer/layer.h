@@ -2,8 +2,21 @@
 #define LAYER_H
 
 #include <Eigen/Core>
+#include <cstdint>
 
 namespace nn {
+
+// fnv1a hash
+static constexpr uint64_t layerNameHash(const char* name) {
+  uint64_t hash = 14695981039346656037ull;
+  int i = 0;
+  while (name[i] != 0) {
+	hash ^= static_cast<uint8_t>(name[i]);
+	hash *= 1099511628211ull;
+	i++;
+  }
+  return hash;
+}
 
 class Layer {
  public:
@@ -24,6 +37,14 @@ class Layer {
   virtual float regularizationLoss();
 
   virtual void update(float learning_rate);
+
+  virtual uint64_t id() = 0;
+
+  virtual int paramCount() = 0;
+
+  virtual ArrayRef param(int param) = 0;
+
+  // virtual bool setParam(int param, const ConstArrayRef& values) = 0;
 
  protected:
   int m_input_size;

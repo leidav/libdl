@@ -51,4 +51,33 @@ void FullyConnectedLayer::update(float learning_rate) {
   m_bias_updat_rule.update(m_bias_weights, m_db, learning_rate);
 }
 
+uint64_t FullyConnectedLayer::id() {
+  return layerNameHash("FullyConnectedLayer");
+}
+
+int FullyConnectedLayer::paramCount() { return 8; }
+
+Layer::ArrayRef FullyConnectedLayer::param(int param) {
+  switch (param) {
+    case 0:
+	  return ArrayRef(m_weights);
+    case 1:
+	  return ArrayRef(m_bias_weights);
+    case 2:
+	  return Eigen::Map<Array>(&m_weight_updat_rule.t, 1, 1);
+    case 3:
+	  return ArrayRef(m_weight_updat_rule.gradient_average);
+    case 4:
+	  return ArrayRef(m_weight_updat_rule.squared_gradient_average);
+    case 5:
+	  return Eigen::Map<Array>(&m_bias_updat_rule.t, 1, 1);
+    case 6:
+	  return ArrayRef(m_bias_updat_rule.gradient_average);
+    case 7:
+	  return ArrayRef(m_bias_updat_rule.squared_gradient_average);
+    default:
+	  return Eigen::Map<Array>(nullptr, 0, 0);
+  }
+}
+
 };  // namespace nn

@@ -96,4 +96,55 @@ const Layer::ConstArrayRef NeuralNetwork::y() {
 const Layer::ConstArrayRef NeuralNetwork::inference_result() {
   return Layer::ConstArrayRef(m_output_layer_inference_data);
 }
+
+void NeuralNetwork::openSaveFile(const char *file) {
+  m_param_saver.open(file);
+  m_param_saver.startFile();
+}
+
+void NeuralNetwork::saveParameters() {
+  m_param_saver.startEpoch();
+  for (auto layer : m_hidden_layer) {
+	saveLayer(*layer, m_param_saver);
+  }
+  saveLayer(*m_output_layer, m_param_saver);
+  m_param_saver.endEpoch();
+}
+
+void NeuralNetwork::loadParameters(const char *file, int epoch) {
+  ParamLoader loader;
+  loader.open(file);
+  int epochs = loader.epochCount();
+  if (epoch > epochs) {
+	std::terminate();
+  }
+  loader.setLoadingEpoch(epoch);
+  for (auto layer : m_hidden_layer) {
+	loadLayer(*layer, loader);
+  }
+  loadLayer(*m_output_layer, loader);
+}
+
+void NeuralNetwork::saveLayer(Layer &layer, ParamSaver &saver) {
+  uint64_t id = layer.id();
+  uint64_t param_count = layer.paramCount();
+  saver.startLayer(id, param_count);
+  for (int i = 0; i < param_count; i++) {
+	saver.addParam(layer.param(i));
+  }
+}
+
+void NeuralNetwork::loadLayer(Layer &layer, ParamLoader &loader) {
+  uint64_t id;
+  int param_count;
+  loader.loadLayerInfo(id, param_count);
+  if ((id != layer.id()) || (param_count != layer.paramCount())) {
+	std::terminate();
+  }
+  for (int i = 0; i < param_count; i++) {
+	if (!loader.loadParam(layer.param(i))) {
+		std::terminate();
+	}
+  }
+}
 };  // namespace nn

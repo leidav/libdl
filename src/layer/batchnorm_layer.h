@@ -16,6 +16,12 @@ class BatchnormLayer : public Layer {
 
   void update(float learning_rate) final;
 
+  uint64_t id() final;
+
+  int paramCount() final;
+
+  ArrayRef param(int param) final;
+
  private:
   float m_alpha;
   Eigen::RowVectorXf m_beta;

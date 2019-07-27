@@ -36,4 +36,11 @@ float SoftmaxLayer::loss(ArrayRef dx, const ConstArrayRef &x,
   return m_loss;
 }
 
+uint64_t SoftmaxLayer::id() { return layerNameHash("SoftmaxLayer"); }
+int SoftmaxLayer::paramCount() { return 0; }
+
+Layer::ArrayRef SoftmaxLayer::param(int param) {
+  return Eigen::Map<Array>(nullptr, 0, 0);
+}
+
 };  // namespace nn

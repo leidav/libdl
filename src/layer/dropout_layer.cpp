@@ -42,4 +42,12 @@ void DropOutLayer::backward(ArrayRef dx, const ConstArrayRef &x,
   dx = m_mask * dy;
 }
 
+uint64_t DropOutLayer::id() { return layerNameHash("DropoutLayer"); }
+
+int DropOutLayer::paramCount() { return 0; }
+
+Layer::ArrayRef DropOutLayer::param(int param) {
+  return Eigen::Map<Array>(nullptr, 0, 0);
+}
+
 };  // namespace nn

@@ -16,6 +16,12 @@ class MaxPoolingLayer : public Layer {
   void backward(ArrayRef dx, const ConstArrayRef& x, const ConstArrayRef& y,
                 const ConstArrayRef& dy) final;
 
+  uint64_t id() final;
+
+  int paramCount() final;
+
+  ArrayRef param(int param) final;
+
  private:
   int m_input_width;
   int m_input_height;

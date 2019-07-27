@@ -56,7 +56,35 @@ void BatchnormLayer::backward(ArrayRef dx, const ConstArrayRef &x,
 
 void BatchnormLayer::update(float learning_rate) {
   m_beta_update_rule.update(m_beta, m_dbeta, learning_rate);
-  m_beta_update_rule.update(m_beta, m_dbeta, learning_rate);
+  // m_beta_update_rule.update(m_beta, m_dbeta, learning_rate);
+  m_beta_update_rule.update(m_gamma, m_dgamma, learning_rate);
+}
+
+uint64_t BatchnormLayer::id() { return layerNameHash("BatchnormLayer"); }
+
+int BatchnormLayer::paramCount() { return 8; }
+
+Layer::ArrayRef BatchnormLayer::param(int param) {
+  switch (param) {
+    case 0:
+	  return ArrayRef(m_beta);
+    case 1:
+	  return ArrayRef(m_gamma);
+    case 2:
+	  return Eigen::Map<Array>(&m_beta_update_rule.t, 1, 1);
+    case 3:
+	  return ArrayRef(m_beta_update_rule.gradient_average);
+    case 4:
+	  return ArrayRef(m_beta_update_rule.squared_gradient_average);
+    case 5:
+	  return Eigen::Map<Array>(&m_gamma_update_rule.t, 1, 1);
+    case 6:
+	  return ArrayRef(m_gamma_update_rule.gradient_average);
+    case 7:
+	  return ArrayRef(m_gamma_update_rule.squared_gradient_average);
+    default:
+	  return Eigen::Map<Array>(nullptr, 0, 0);
+  }
 }
 
 };  // namespace nn

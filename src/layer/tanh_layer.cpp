@@ -14,4 +14,11 @@ void TanhLayer::backward(ArrayRef dx, const ConstArrayRef &x,
   dx = 1.0f - y.square();
 }
 
+uint64_t TanhLayer::id() { return layerNameHash("TanhLayer"); }
+int TanhLayer::paramCount() { return 0; }
+
+Layer::ArrayRef TanhLayer::param(int param) {
+  return Eigen::Map<Array>(nullptr, 0, 0);
+}
+
 };  // namespace nn

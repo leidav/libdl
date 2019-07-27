@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "layer/layer.h"
+#include "param_saver.h"
 
 namespace nn {
 struct LayerTrainData {
@@ -33,9 +34,20 @@ class NeuralNetwork {
   void backward(const Layer::ConstArrayRef& x, float learning_rate);
 
   const Layer::ConstArrayRef y();
+
   const Layer::ConstArrayRef inference_result();
 
+  void openSaveFile(const char* file);
+
+  void saveParameters();
+
+  void loadParameters(const char* file, int epoch);
+
  private:
+  void saveLayer(Layer& layer, ParamSaver& saver);
+
+  void loadLayer(Layer& layer, ParamLoader& loader);
+
   int m_batch_size;
   std::vector<std::shared_ptr<Layer>> m_hidden_layer;
   std::shared_ptr<OutputLayer> m_output_layer;
@@ -43,6 +55,7 @@ class NeuralNetwork {
   LayerTrainData m_output_layer_data;
   std::vector<Layer::Array> m_hidden_layer_inference_data;
   Layer::Array m_output_layer_inference_data;
+  ParamSaver m_param_saver;
 };
 };  // namespace nn
 

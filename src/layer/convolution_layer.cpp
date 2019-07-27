@@ -91,4 +91,30 @@ void ConvolutionLayer::update(float learning_rate) {
   m_bias_updat_rule.update(m_bias_weights, m_db, learning_rate);
 }
 
+uint64_t ConvolutionLayer::id() { return layerNameHash("ConvolutionLayer"); }
+
+int ConvolutionLayer::paramCount() { return 8; }
+
+Layer::ArrayRef ConvolutionLayer::param(int param) {
+  switch (param) {
+    case 0:
+	  return ArrayRef(m_filter);
+    case 1:
+	  return ArrayRef(m_bias_weights);
+    case 2:
+	  return Eigen::Map<Array>(&m_filter_updat_rule.t, 1, 1);
+    case 3:
+	  return ArrayRef(m_filter_updat_rule.gradient_average);
+    case 4:
+	  return ArrayRef(m_filter_updat_rule.squared_gradient_average);
+    case 5:
+	  return Eigen::Map<Array>(&m_bias_updat_rule.t, 1, 1);
+    case 6:
+	  return ArrayRef(m_bias_updat_rule.gradient_average);
+    case 7:
+	  return ArrayRef(m_bias_updat_rule.squared_gradient_average);
+    default:
+	  return Eigen::Map<Array>(nullptr, 0, 0);
+  }
+}
 };  // namespace nn

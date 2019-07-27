@@ -35,4 +35,15 @@ void AveragePoolingLayer::backward(ArrayRef dx, const ConstArrayRef &x,
       dx, dy, m_input_width, m_input_height, m_input_depth, m_batch_size,
       m_kernel_size);
 }
+
+uint64_t AveragePoolingLayer::id() {
+  return layerNameHash("AveragePoolingLayer");
+}
+
+int AveragePoolingLayer::paramCount() { return 0; }
+
+Layer::ArrayRef AveragePoolingLayer::param(int param) {
+  return Eigen::Map<Array>(nullptr, 0, 0);
+}
+
 };  // namespace nn

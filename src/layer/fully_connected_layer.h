@@ -23,6 +23,12 @@ class FullyConnectedLayer : public Layer {
 
   void update(float learning_rate) final;
 
+  uint64_t id() final;
+
+  int paramCount() final;
+
+  ArrayRef param(int param) final;
+
  private:
   WeightMatrix m_weights;
   Eigen::VectorXf m_bias_weights;

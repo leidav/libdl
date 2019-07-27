@@ -14,6 +14,12 @@ class SoftmaxLayer : public OutputLayer {
   float loss(ArrayRef dx, const ConstArrayRef& x,
              const ConstArrayRef& labels) final;
 
+  uint64_t id() final;
+
+  int paramCount() final;
+
+  ArrayRef param(int param) final;
+
  private:
   int m_layer_size;
   float m_loss;
