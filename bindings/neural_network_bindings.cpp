@@ -16,5 +16,7 @@ void createNeuralNetworkBinding(py::module &m) {
       .def("inference_result", &NeuralNetwork::inference_result)
       .def("openSaveFile", &NeuralNetwork::openSaveFile)
       .def("saveParameters", &NeuralNetwork::saveParameters)
+      .def("loadBestParameters", &NeuralNetwork::loadBestParameters)
+      .def("loadLastParameters", &NeuralNetwork::loadLastParameters)
       .def("loadParameters", &NeuralNetwork::loadParameters);
 }

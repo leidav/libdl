@@ -37,16 +37,22 @@ class NeuralNetwork {
 
   const Layer::ConstArrayRef inference_result();
 
-  void openSaveFile(const char* file);
+  void openSaveFile(const char* file, int epoch_offset);
 
-  void saveParameters();
+  void saveParameters(float train_loss, float test_loss);
+
+  void loadBestParameters(const char* file);
+
+  void loadLastParameters(const char* file);
 
   void loadParameters(const char* file, int epoch);
 
  private:
-  void saveLayer(Layer& layer, ParamSaver& saver);
+  void saveLayer(Layer& layer, ParamWriter& writer);
 
-  void loadLayer(Layer& layer, ParamLoader& loader);
+  int loadEpoch(ParamReader& reader, int epoch);
+
+  void loadLayer(Layer& loader, ParamReader& reader);
 
   int m_batch_size;
   std::vector<std::shared_ptr<Layer>> m_hidden_layer;
@@ -55,7 +61,7 @@ class NeuralNetwork {
   LayerTrainData m_output_layer_data;
   std::vector<Layer::Array> m_hidden_layer_inference_data;
   Layer::Array m_output_layer_inference_data;
-  ParamSaver m_param_saver;
+  ParamWriter m_param_writer;
 };
 };  // namespace nn
 

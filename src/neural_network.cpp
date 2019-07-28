@@ -97,52 +97,71 @@ const Layer::ConstArrayRef NeuralNetwork::inference_result() {
   return Layer::ConstArrayRef(m_output_layer_inference_data);
 }
 
-void NeuralNetwork::openSaveFile(const char *file) {
-  m_param_saver.open(file);
-  m_param_saver.startFile();
+void NeuralNetwork::openSaveFile(const char *file, int epoch_offset) {
+  m_param_writer.open(file);
+  m_param_writer.startFile(epoch_offset);
 }
 
-void NeuralNetwork::saveParameters() {
-  m_param_saver.startEpoch();
+void NeuralNetwork::saveParameters(float train_loss, float test_loss) {
+  m_param_writer.startEpoch(train_loss, test_loss);
   for (auto layer : m_hidden_layer) {
-	saveLayer(*layer, m_param_saver);
+	saveLayer(*layer, m_param_writer);
   }
-  saveLayer(*m_output_layer, m_param_saver);
-  m_param_saver.endEpoch();
+  saveLayer(*m_output_layer, m_param_writer);
+  m_param_writer.endEpoch();
+}
+
+void NeuralNetwork::loadBestParameters(const char *file) {
+  ParamReader reader;
+  reader.open(file);
+  int epoch = reader.bestTestEpoch();
+  loadEpoch(reader, epoch);
+}
+
+void NeuralNetwork::loadLastParameters(const char *file) {
+  ParamReader reader;
+  reader.open(file);
+  int epoch = reader.epochCount() - 1;
+  loadEpoch(reader, epoch);
 }
 
 void NeuralNetwork::loadParameters(const char *file, int epoch) {
-  ParamLoader loader;
-  loader.open(file);
-  int epochs = loader.epochCount();
+  ParamReader reader;
+  reader.open(file);
+  int epochs = reader.epochCount();
   if (epoch > epochs) {
 	std::terminate();
   }
-  loader.setLoadingEpoch(epoch);
-  for (auto layer : m_hidden_layer) {
-	loadLayer(*layer, loader);
-  }
-  loadLayer(*m_output_layer, loader);
+  loadEpoch(reader, epoch);
 }
 
-void NeuralNetwork::saveLayer(Layer &layer, ParamSaver &saver) {
+void NeuralNetwork::saveLayer(Layer &layer, ParamWriter &writer) {
   uint64_t id = layer.id();
   uint64_t param_count = layer.paramCount();
-  saver.startLayer(id, param_count);
+  writer.startLayer(id, param_count);
   for (int i = 0; i < param_count; i++) {
-	saver.addParam(layer.param(i));
+	writer.addParam(layer.param(i));
   }
 }
 
-void NeuralNetwork::loadLayer(Layer &layer, ParamLoader &loader) {
+int NeuralNetwork::loadEpoch(ParamReader &reader, int epoch) {
+  reader.setLoadingEpoch(epoch);
+  for (auto layer : m_hidden_layer) {
+	loadLayer(*layer, reader);
+  }
+  loadLayer(*m_output_layer, reader);
+  return reader.epochOffset();
+}
+
+void NeuralNetwork::loadLayer(Layer &layer, ParamReader &reader) {
   uint64_t id;
   int param_count;
-  loader.loadLayerInfo(id, param_count);
+  reader.readLayerInfo(id, param_count);
   if ((id != layer.id()) || (param_count != layer.paramCount())) {
 	std::terminate();
   }
   for (int i = 0; i < param_count; i++) {
-	if (!loader.loadParam(layer.param(i))) {
+	if (!reader.readParam(layer.param(i))) {
 		std::terminate();
 	}
   }
