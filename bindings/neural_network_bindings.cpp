@@ -9,11 +9,13 @@ void createNeuralNetworkBinding(py::module &m) {
   neural_network.def(py::init<int>())
       .def("addHiddenLayer", &NeuralNetwork::addHiddenLayer)
       .def("addOutputLayer", &NeuralNetwork::addOutputLayer)
+      .def("addResidual",
+           &NeuralNetwork::addResidual)  //(int input);
       .def("forward", &NeuralNetwork::forward)
       .def("inference", &NeuralNetwork::inference)
       .def("backward", &NeuralNetwork::backward)
-      .def("y", &NeuralNetwork::y)
-      .def("inference_result", &NeuralNetwork::inference_result)
+      .def("result", &NeuralNetwork::result)
+      .def("inferenceResult", &NeuralNetwork::inferenceResult)
       .def("openSaveFile", &NeuralNetwork::openSaveFile)
       .def("saveParameters", &NeuralNetwork::saveParameters)
       .def("loadBestParameters", &NeuralNetwork::loadBestParameters)

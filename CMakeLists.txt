@@ -38,6 +38,7 @@ add_subdirectory(samples/xor)
 add_subdirectory(samples/digits)
 add_subdirectory(samples/digits_cnn)
 add_subdirectory(samples/python/digits)
+add_subdirectory(samples/python/artifacts)
 
 add_subdirectory(tests)
 

@@ -26,8 +26,8 @@ def main():
     num_test_mini_batches = int(np.ceil(test_size / mini_batch_size))
 
     l2_regularization = 1e-5
-    mini_batch_images=np.zeros((mini_batch_size, image_size))
-    mini_batch_labels=np.zeros((mini_batch_size, 1))
+    mini_batch_images=np.zeros((mini_batch_size, image_size),dtype=np.float32)
+    mini_batch_labels=np.zeros((mini_batch_size, 1),dtype=np.float32)
     net = pydl.NeuralNetwork(mini_batch_size)
     net.openSaveFile("test.save",0)
 
@@ -59,7 +59,7 @@ def main():
         train_loss=0.0
         permutated_indices=np.random.permutation(train_size)
         for i in range(num_train_mini_batches):
-            indices=permutated_indices[np.arange(i*mini_batch_size,(i+1)*mini_batch_size)%test_size]
+            indices=permutated_indices[np.arange(i*mini_batch_size,(i+1)*mini_batch_size)%train_size]
             mini_batch_images[np.arange(mini_batch_size)]=train_images[indices]
             mini_batch_labels[np.arange(mini_batch_size)]=train_labels[indices]
             train_loss+=net.forward(mini_batch_images,mini_batch_labels,True)
@@ -74,7 +74,7 @@ def main():
             mini_batch_images[np.arange(mini_batch_size)]=test_images[indices]
             mini_batch_labels[np.arange(mini_batch_size)]=test_labels[indices]
             test_loss+=net.forward(mini_batch_images,mini_batch_labels,False)
-            labels=net.y().argmax(axis=1)#.reshape(mini_batch_size,1)
+            labels=net.result().argmax(axis=1)#.reshape(mini_batch_size,1)
             accuracy+=((labels==mini_batch_labels.transpose()[0]).astype(float)).sum()
         test_loss/=num_test_mini_batches
         accuracy = (accuracy/test_size)*100
@@ -89,7 +89,7 @@ def main():
     mini_batch_images[np.arange(mini_batch_size)]=test_images[indices]
     mini_batch_labels[np.arange(mini_batch_size)]=test_labels[indices]
     net.forward(mini_batch_images,mini_batch_labels,False)
-    results=net.y().argmax(axis=1)
+    results=net.result().argmax(axis=1)
     plt.gray()
     for i in range(10):
         result=results[i]

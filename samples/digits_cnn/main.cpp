@@ -71,8 +71,10 @@ int main(int argc, char* argv[]) {
   int input_height = 28;
   int output_width;
   int output_height;
+
   nn::utils::convolution_helper::imageoutputSize(
       output_width, output_height, input_width, input_height, 5, 0, 1);
+
   net.addHiddenLayer(std::make_unique<nn::ConvolutionLayer>(
       input_width, input_height, 1, output_width, output_height, 6, 5,
       mini_batch_size, 0, 1, l2_regularization));
@@ -169,7 +171,7 @@ int main(int argc, char* argv[]) {
 
 	  // calculate accuracy
 	  test_loss += loss;
-	  const nn::Layer::ConstArrayRef& y = net.y();
+	  const nn::Layer::ConstArrayRef& y = net.result();
 	  for (int k = 0; k < mini_batch_size; k++) {
 		int label = static_cast<int>(mini_batch_label(k, 0));
 		int max;
@@ -201,7 +203,7 @@ int main(int argc, char* argv[]) {
 
   for (int i = 0; i < 10; i++) {
 	int max;
-	net.y().row(i).maxCoeff(&max);
+	net.result().row(i).maxCoeff(&max);
 	int ground_truth = mini_batch_label(i, 0);
 	printf("result: %d, ground truth: %d\n", max, ground_truth);
 	fflush(stdout);

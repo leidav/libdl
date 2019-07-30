@@ -33,6 +33,7 @@ class BatchnormLayer : public Layer {
   Eigen::RowVectorXf m_running_mean;
   Eigen::RowVectorXf m_running_var;
   Array m_x_hat;
+  Array m_dx_hat;
   AdamUpdate<Eigen::RowVectorXf> m_beta_update_rule;
   AdamUpdate<Eigen::RowVectorXf> m_gamma_update_rule;
 

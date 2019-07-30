@@ -2,10 +2,12 @@
 
 #include <layer/average_pooling_layer.h>
 #include <layer/batchnorm_layer.h>
+#include <layer/convolution1x1_layer.h>
 #include <layer/convolution_layer.h>
 #include <layer/dropout_layer.h>
 #include <layer/fully_connected_layer.h>
 #include <layer/layer.h>
+#include <layer/leaky_relu_layer.h>
 #include <layer/least_squares_layer.h>
 #include <layer/max_pooling_layer.h>
 #include <layer/relu_layer.h>
@@ -121,6 +123,17 @@ void createLayerBinding(py::module& m) {
       .def("paramCount", &ReLULayer::paramCount)
       .def("param", &ReLULayer::param);
 
+  py::class_<LeakyReLULayer, Layer, std::shared_ptr<LeakyReLULayer>>(
+      m, "LeakyReLULayer")
+      .def(py::init<int, float>(), py::arg(), py::arg("alpha") = 0.01f)
+      .def("forward", &LeakyReLULayer::forward)
+      .def("backward", &LeakyReLULayer::backward)
+      .def("regularizationLoss", &LeakyReLULayer::regularizationLoss)
+      .def("update", &LeakyReLULayer::update)
+      .def("id", &LeakyReLULayer::id)
+      .def("paramCount", &LeakyReLULayer::paramCount)
+      .def("param", &LeakyReLULayer::param);
+
   py::class_<SigmoidLayer, Layer, std::shared_ptr<SigmoidLayer>>(m,
                                                                  "SigmoidLayer")
       .def(py::init<int>())
@@ -189,7 +202,7 @@ void createLayerBinding(py::module& m) {
       .def("paramCount", &DropOutLayer::paramCount)
       .def("param", &DropOutLayer::param);
 
-  py::class_<ConvolutionLayer, std::shared_ptr<ConvolutionLayer>>(
+  py::class_<ConvolutionLayer, Layer, std::shared_ptr<ConvolutionLayer>>(
       m, "ConvolutionLayer")
       .def(py::init<int, int, int, int, int, int, int, int, int, int, float>(),
            py::arg(), py::arg(), py::arg(), py::arg(), py::arg(), py::arg(),
@@ -202,6 +215,19 @@ void createLayerBinding(py::module& m) {
       .def("id", &ConvolutionLayer::id)
       .def("paramCount", &ConvolutionLayer::paramCount)
       .def("param", &ConvolutionLayer::param);
+
+  py::class_<Convolution1x1Layer, Layer, std::shared_ptr<Convolution1x1Layer>>(
+      m, "Convolution1x1Layer")
+      .def(py::init<int, int, int, int, int, float>(), py::arg(), py::arg(),
+           py::arg(), py::arg(), py::arg(),
+           py::arg("regularization_factor") = 1e-6f)
+      .def("forward", &Convolution1x1Layer::forward)
+      .def("backward", &Convolution1x1Layer::backward)
+      .def("regularizationLoss", &Convolution1x1Layer::regularizationLoss)
+      .def("update", &Convolution1x1Layer::update)
+      .def("id", &Convolution1x1Layer::id)
+      .def("paramCount", &Convolution1x1Layer::paramCount)
+      .def("param", &Convolution1x1Layer::param);
 
   py::class_<MaxPoolingLayer, Layer, std::shared_ptr<MaxPoolingLayer>>(
       m, "MaxPoolingLayer")

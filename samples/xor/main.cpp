@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 
   net.inference(input);
   std::cout << "input: " << input(0, 0) << "," << input(0, 1) << std::endl;
-  nn::Layer::Array output = net.inference_result().round();
+  nn::Layer::Array output = net.inferenceResult().round();
   std::cout << "result: " << output + 0.0f << std::endl;
   return 0;
 }

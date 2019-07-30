@@ -1,5 +1,6 @@
 #include "batchnorm_layer.h"
 namespace nn {
+
 BatchnormLayer::BatchnormLayer(int batch_size, int layer_size, float alpha)
     : Layer(layer_size, layer_size),
       m_alpha(alpha),
@@ -12,6 +13,7 @@ BatchnormLayer::BatchnormLayer(int batch_size, int layer_size, float alpha)
       m_running_mean(Eigen::RowVectorXf::Zero(layer_size)),
       m_running_var(Eigen::RowVectorXf::Zero(layer_size)),
       m_x_hat(batch_size, layer_size),
+      m_dx_hat(batch_size, layer_size),
       m_beta_update_rule(layer_size),
       m_gamma_update_rule(layer_size) {}
 
@@ -40,18 +42,21 @@ void BatchnormLayer::backward(ArrayRef dx, const ConstArrayRef &x,
                               const ConstArrayRef &y, const ConstArrayRef &dy) {
   constexpr float eps = 1e-5f;
   // pre allocated temporary array
-  static thread_local Layer::Array dx_hat(m_x_hat.rows(), m_x_hat.cols());
+
+  // static thread_local Layer::Array dx_hat(m_x_hat.rows(), m_x_hat.cols());
+
   float batch_size = static_cast<float>(x.rows());
   m_dbeta = dy.colwise().sum();
   m_dgamma = (dy * m_x_hat).colwise().sum();
-  dx_hat = dy.rowwise() * m_gamma.array();
+  m_dx_hat = dy.rowwise() * m_gamma.array();
 
   // https://kevinzakka.github.io/2016/09/14/batch_normalization/
   // dx = (1. / N) * inv_var * (N*dxhat - np.sum(dxhat, axis=0)
   //	- x_hat*np.sum(dxhat*x_hat, axis=0))
-  dx = ((dx_hat * batch_size).rowwise() - (dx_hat.colwise().sum())).rowwise() *
+  dx = ((m_dx_hat * batch_size).rowwise() - (m_dx_hat.colwise().sum()))
+               .rowwise() *
            ((1.0f / batch_size) * (m_batch_var.array() + eps).rsqrt()) -
-       m_x_hat.rowwise() * (m_x_hat * dx_hat).colwise().sum();
+       m_x_hat.rowwise() * (m_x_hat * m_dx_hat).colwise().sum();
 }
 
 void BatchnormLayer::update(float learning_rate) {

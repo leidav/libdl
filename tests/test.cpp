@@ -103,7 +103,7 @@ TEST_CASE("Neural Network", "[NN]") {
   net.backward(a, 0.01f);
   REQUIRE(y.rows() == 32);
   REQUIRE(y.cols() == 10);
-  y = net.y();
+  y = net.result();
   std::cout << "loss: " << loss << std::endl;
   std::cout << "array: " << y << std::endl;
 }
@@ -148,19 +148,19 @@ TEST_CASE("Xor Test", "[Xor]") {
   expected_result4 << 0;
 
   net.inference(test_data1);
-  nn::Layer::Array output = net.inference_result().round();
+  nn::Layer::Array output = net.inferenceResult().round();
   REQUIRE(output.isApprox(expected_result1));
   std::cout << "0 xor 0: " << output + 0.0 << std::endl;
   net.inference(test_data2);
-  output = net.inference_result().round();
+  output = net.inferenceResult().round();
   REQUIRE(output.isApprox(expected_result2));
   std::cout << "0 xor 1: " << output + 0.0 << std::endl;
   net.inference(test_data3);
-  output = net.inference_result().round();
+  output = net.inferenceResult().round();
   REQUIRE(output.isApprox(expected_result3));
   std::cout << "1 xor 0: " << output + 0.0 << std::endl;
   net.inference(test_data4);
-  output = net.inference_result().round();
+  output = net.inferenceResult().round();
   REQUIRE(output.isApprox(expected_result4));
   std::cout << "1 xor 1: " << output + 0.0 << std::endl;
 }

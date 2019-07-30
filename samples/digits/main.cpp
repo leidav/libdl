@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
 
 	  // calculate accuracy
 	  test_loss += loss;
-	  const nn::Layer::ConstArrayRef& y = net.y();
+	  const nn::Layer::ConstArrayRef& y = net.result();
 	  for (int k = 0; k < mini_batch_size; k++) {
 		int label = static_cast<int>(mini_batch_label(k, 0));
 		int max;
@@ -169,7 +169,7 @@ int main(int argc, char* argv[]) {
 
   for (int i = 0; i < 10; i++) {
 	int max;
-	net.y().row(i).maxCoeff(&max);
+	net.result().row(i).maxCoeff(&max);
 	int ground_truth = mini_batch_label(i, 0);
 	printf("result: %d, ground truth: %d\n", max, ground_truth);
 	fflush(stdout);

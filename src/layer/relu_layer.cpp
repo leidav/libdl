@@ -14,7 +14,7 @@ void ReLULayer::backward(ArrayRef dx, const ConstArrayRef &x,
                          const ConstArrayRef &y, const ConstArrayRef &dy) {
   dx = dy * y.min(1).ceil();
 }
-uint64_t ReLULayer::id() { return layerNameHash("ReluLayer"); }
+uint64_t ReLULayer::id() { return layerNameHash("ReLULayer"); }
 int ReLULayer::paramCount() { return 0; }
 
 Layer::ArrayRef ReLULayer::param(int param) {

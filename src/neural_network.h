@@ -16,6 +16,11 @@ struct LayerTrainData {
   Layer::Array dx;
 };
 
+struct ResidualInfo {
+  bool residual;
+  int layer;
+};
+
 class NeuralNetwork {
  public:
   NeuralNetwork(int batch_size);
@@ -26,6 +31,8 @@ class NeuralNetwork {
 
   void addOutputLayer(std::shared_ptr<OutputLayer> output_layer);
 
+  void addResidual(int input);
+
   float forward(const Layer::ConstArrayRef& input,
                 const Layer::ConstArrayRef& ground_truth, bool train);
 
@@ -33,9 +40,9 @@ class NeuralNetwork {
 
   void backward(const Layer::ConstArrayRef& x, float learning_rate);
 
-  const Layer::ConstArrayRef y();
+  const Layer::ConstArrayRef result();
 
-  const Layer::ConstArrayRef inference_result();
+  const Layer::ConstArrayRef inferenceResult();
 
   void openSaveFile(const char* file, int epoch_offset);
 
@@ -58,9 +65,9 @@ class NeuralNetwork {
   std::vector<std::shared_ptr<Layer>> m_hidden_layer;
   std::shared_ptr<OutputLayer> m_output_layer;
   std::vector<LayerTrainData> m_hidden_layer_data;
+  std::vector<ResidualInfo> m_residual_info;
+  std::vector<ResidualInfo> m_residual_gradient_info;
   LayerTrainData m_output_layer_data;
-  std::vector<Layer::Array> m_hidden_layer_inference_data;
-  Layer::Array m_output_layer_inference_data;
   ParamWriter m_param_writer;
 };
 };  // namespace nn
