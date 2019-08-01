@@ -3,9 +3,12 @@
 
 #include "layer.h"
 
+// for more documentation see layer.h
+
 namespace nn {
 class LeastSquaresLayer : public OutputLayer {
  public:
+  /// \param layer_size The number of inputs/outputs per sample
   LeastSquaresLayer(int layer_size);
   virtual ~LeastSquaresLayer();
 

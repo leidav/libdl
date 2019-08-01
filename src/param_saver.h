@@ -19,6 +19,7 @@ struct FileHeader {
   uint32_t best_test_epoch;
 };
 
+/// \brief Helper class for writing layer parameters to a file
 class ParamWriter {
  public:
   ParamWriter();
@@ -40,6 +41,7 @@ class ParamWriter {
   std::FILE *m_file;
 };
 
+/// \brief Helper class for reading layer parameters from a file
 class ParamReader {
  public:
   ParamReader();

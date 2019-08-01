@@ -3,9 +3,13 @@
 
 #include "layer.h"
 
+// for more documentation see layer.h
+
 namespace nn {
 class LeakyReLULayer : public Layer {
  public:
+  /// \param layer_size The number of inputs/outputs per sample
+  /// \param alpha Multiplied with negative values
   LeakyReLULayer(int layer_size, float alpha = 0.01);
   virtual ~LeakyReLULayer();
 

@@ -199,7 +199,7 @@ TEST_CASE("Convolution Layer", "[conv]") {
   int padding = nn::utils::convolution_helper::padding(3, 1);
   nn::Layer::Array output(2, 4 * 4 * 8);
   nn::Layer::Array dy = nn::Layer::Array::Ones(2, 4 * 4 * 8);
-  nn::ConvolutionLayer conv(4, 4, 2, 4, 4, 8, 3, 2, padding, 1);
+  nn::ConvolutionLayer conv(4, 4, 2, 8, 3, 2, padding, 1);
   conv.forward(output, x, true);
   conv.backward(dx, x, output, dy);
   conv.update(1e-3f);

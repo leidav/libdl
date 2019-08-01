@@ -204,10 +204,9 @@ void createLayerBinding(py::module& m) {
 
   py::class_<ConvolutionLayer, Layer, std::shared_ptr<ConvolutionLayer>>(
       m, "ConvolutionLayer")
-      .def(py::init<int, int, int, int, int, int, int, int, int, int, float>(),
+      .def(py::init<int, int, int, int, int, int, int, int, float>(), py::arg(),
            py::arg(), py::arg(), py::arg(), py::arg(), py::arg(), py::arg(),
-           py::arg(), py::arg(), py::arg(), py::arg(),
-           py::arg("regularization_factor") = 1e-6f)
+           py::arg(), py::arg("regularization_factor") = 1e-6f)
       .def("forward", &ConvolutionLayer::forward)
       .def("backward", &ConvolutionLayer::backward)
       .def("regularizationLoss", &ConvolutionLayer::regularizationLoss)
@@ -231,7 +230,7 @@ void createLayerBinding(py::module& m) {
 
   py::class_<MaxPoolingLayer, Layer, std::shared_ptr<MaxPoolingLayer>>(
       m, "MaxPoolingLayer")
-      .def(py::init<int, int, int, int, int, int, int>())
+      .def(py::init<int, int, int, int, int>())
       .def("forward", &MaxPoolingLayer::forward)
       .def("backward", &MaxPoolingLayer::backward)
       .def("regularizationLoss", &MaxPoolingLayer::regularizationLoss)
@@ -242,7 +241,7 @@ void createLayerBinding(py::module& m) {
 
   py::class_<AveragePoolingLayer, Layer, std::shared_ptr<AveragePoolingLayer>>(
       m, "AveragePoolingLayer")
-      .def(py::init<int, int, int, int, int, int, int>())
+      .def(py::init<int, int, int, int, int>())
       .def("forward", &AveragePoolingLayer::forward)
       .def("backward", &AveragePoolingLayer::backward)
       .def("regularizationLoss", &AveragePoolingLayer::regularizationLoss)

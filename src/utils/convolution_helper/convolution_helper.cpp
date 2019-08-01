@@ -6,22 +6,22 @@
 namespace nn {
 namespace utils {
 namespace convolution_helper {
-int imageoutputWidth(int input_width, int input_height, int kernel_size,
-                     int padding, int stride) {
+int convolutionOutputWidth(int input_width, int input_height, int kernel_size,
+                           int padding, int stride) {
   return (input_width - kernel_size + padding * 2) / stride + 1;
 }
-int imageoutputHeight(int input_width, int input_height, int kernel_size,
-                      int padding, int stride) {
+int convolutionOutputHeight(int input_width, int input_height, int kernel_size,
+                            int padding, int stride) {
   return (input_height - kernel_size + padding * 2) / stride + 1;
 }
 
-void imageoutputSize(int &output_width, int &output_height, int input_width,
-                     int input_height, int kernel_size, int padding,
-                     int stride) {
-  output_width =
-      imageoutputWidth(input_width, input_height, kernel_size, padding, stride);
-  output_height = imageoutputHeight(input_width, input_height, kernel_size,
-                                    padding, stride);
+void convolutionOutputSize(int &output_width, int &output_height,
+                           int input_width, int input_height, int kernel_size,
+                           int padding, int stride) {
+  output_width = convolutionOutputWidth(input_width, input_height, kernel_size,
+                                        padding, stride);
+  output_height = convolutionOutputHeight(input_width, input_height,
+                                          kernel_size, padding, stride);
 }
 
 void im2row(Layer::ArrayRef out, const Layer::ConstArrayRef &in, int width,
@@ -30,8 +30,8 @@ void im2row(Layer::ArrayRef out, const Layer::ConstArrayRef &in, int width,
   auto index = [width](int x, int y) -> int { return y * width + x; };
   int output_width;
   int output_height;
-  imageoutputSize(output_width, output_height, width, height, kernel_size,
-                  padding, stride);
+  convolutionOutputSize(output_width, output_height, width, height, kernel_size,
+                        padding, stride);
 
   int image_size = width * height;
 
@@ -75,8 +75,8 @@ int im2rowOutputRows(int image_width, int image_height, int image_depth,
                      int batch_size, int kernel_size, int padding, int stride) {
   int output_width;
   int output_height;
-  imageoutputSize(output_width, output_height, image_width, image_height,
-                  kernel_size, padding, stride);
+  convolutionOutputSize(output_width, output_height, image_width, image_height,
+                        kernel_size, padding, stride);
 
   return output_width * output_height * batch_size;
 }
@@ -85,8 +85,8 @@ int im2rowOutputCols(int image_width, int image_height, int image_depth,
                      int batch_size, int kernel_size, int padding, int stride) {
   int output_width;
   int output_height;
-  imageoutputSize(output_width, output_height, image_width, image_height,
-                  kernel_size, padding, stride);
+  convolutionOutputSize(output_width, output_height, image_width, image_height,
+                        kernel_size, padding, stride);
 
   return kernel_size * kernel_size * image_depth;
 }
@@ -96,8 +96,8 @@ void im2rowOutputSize(int &output_rows, int &output_cols, int image_width,
                       int kernel_size, int padding, int stride) {
   int output_width;
   int output_height;
-  imageoutputSize(output_width, output_height, image_width, image_height,
-                  kernel_size, padding, stride);
+  convolutionOutputSize(output_width, output_height, image_width, image_height,
+                        kernel_size, padding, stride);
 
   output_cols = kernel_size * kernel_size * image_depth;
   output_rows = output_width * output_height * batch_size;
@@ -131,8 +131,8 @@ void im2rowBackward(Layer::ArrayRef dx, const Layer::ConstArrayRef &dy,
 
   int output_width;
   int output_height;
-  imageoutputSize(output_width, output_height, width, height, kernel_size,
-                  padding, stride);
+  convolutionOutputSize(output_width, output_height, width, height, kernel_size,
+                        padding, stride);
 
   auto index = [width](int x, int y) -> int { return y * width + x; };
 
@@ -172,8 +172,6 @@ void im2rowBackward(Layer::ArrayRef dx, const Layer::ConstArrayRef &dy,
   }
 }
 
-bool isValid(int width, int height, int kernel_size, int padding, int stride) {}
-
 void maxPooling(Layer::ArrayRef out, std::vector<uint8_t> &indices,
                 const Layer::ConstArrayRef &in, int width, int height,
                 int depth, int batch_size, int kernel_size) {
@@ -183,8 +181,8 @@ void maxPooling(Layer::ArrayRef out, std::vector<uint8_t> &indices,
   };
   int output_width;
   int output_height;
-  imageoutputSize(output_width, output_height, width, height, kernel_size, 0,
-                  stride);
+  convolutionOutputSize(output_width, output_height, width, height, kernel_size,
+                        0, stride);
   auto output_index = [output_width, depth](int x, int y, int z) -> int {
 	return y * output_width * depth + x * depth + z;
   };
@@ -234,8 +232,8 @@ void maxPoolingBackward(Layer::ArrayRef dx, std::vector<uint8_t> &indices,
   };
   int output_width;
   int output_height;
-  imageoutputSize(output_width, output_height, width, height, kernel_size, 0,
-                  stride);
+  convolutionOutputSize(output_width, output_height, width, height, kernel_size,
+                        0, stride);
   auto output_index = [output_width, depth](int x, int y, int z) -> int {
 	return y * output_width * depth + x * depth + z;
   };
@@ -272,8 +270,8 @@ void averagePooling(Layer::ArrayRef out, const Layer::ConstArrayRef &in,
   };
   int output_width;
   int output_height;
-  imageoutputSize(output_width, output_height, width, height, kernel_size, 0,
-                  stride);
+  convolutionOutputSize(output_width, output_height, width, height, kernel_size,
+                        0, stride);
   auto output_index = [output_width, depth](int x, int y, int z) -> int {
 	return y * output_width * depth + x * depth + z;
   };
@@ -312,8 +310,8 @@ void averagePoolingBackward(Layer::ArrayRef dx, const Layer::ConstArrayRef &dy,
   };
   int output_width;
   int output_height;
-  imageoutputSize(output_width, output_height, width, height, kernel_size, 0,
-                  stride);
+  convolutionOutputSize(output_width, output_height, width, height, kernel_size,
+                        0, stride);
   auto output_index = [output_width, depth](int x, int y, int z) -> int {
 	return y * output_width * depth + x * depth + z;
   };

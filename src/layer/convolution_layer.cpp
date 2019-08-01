@@ -9,13 +9,20 @@ namespace nn {
 static thread_local std::random_device g_seed_generator;
 static thread_local std::mt19937 g_mersenne_twister(g_seed_generator());
 
-ConvolutionLayer::ConvolutionLayer(
-    int input_image_width, int input_image_height, int input_image_depth,
-    int output_image_width, int output_image_height, int output_image_depth,
-    int kernel_size, int batch_size, int padding, int stride,
-    float regularization_factor)
+ConvolutionLayer::ConvolutionLayer(int input_image_width,
+                                   int input_image_height,
+                                   int input_image_depth,
+                                   int output_image_depth, int kernel_size,
+                                   int batch_size, int padding, int stride,
+                                   float regularization_factor)
     : Layer(input_image_width * input_image_height * input_image_depth,
-            output_image_width * output_image_height * output_image_depth),
+            utils::convolution_helper::convolutionOutputWidth(
+                input_image_width, input_image_height, kernel_size, padding,
+                stride) *
+                utils::convolution_helper::convolutionOutputHeight(
+                    input_image_width, input_image_height, kernel_size, padding,
+                    stride) *
+                output_image_depth),
       m_input_width(input_image_width),
       m_input_height(input_image_height),
       m_input_depth(input_image_depth),

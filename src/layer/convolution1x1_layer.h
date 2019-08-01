@@ -4,12 +4,26 @@
 #include "layer.h"
 #include "update_rule.h"
 
+// for more documentation see layer.h
+
 namespace nn {
+
+///\brief Fast convolution Layer with kernel size = 1, stride = 1 and padding =
+/// 0
 class Convolution1x1Layer : public Layer {
  public:
   using WeightMatrix =
 	  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
+  /// \param input_image_width The with of the input image
+  /// \param imput_image_height The height of the input image
+  /// \param input_image_depth The number of channels of the input image
+  /// \param output_image_width The with of the output image
+  /// \param output_image_height The height of the output image
+  /// \param output_image_depth The number of channels of the output image
+  /// \param batch_size The number of input/output images
+  /// \param regularization_factor Small factor for the penalty applied to the
+  /// filter kernel to prevent overfitting
   Convolution1x1Layer(int input_image_width, int imput_image_height,
                       int input_image_depth, int output_image_depth,
                       int batch_size, float regularization_factor = 1e-6f);

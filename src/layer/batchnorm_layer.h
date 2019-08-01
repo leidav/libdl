@@ -3,9 +3,15 @@
 
 #include "layer.h"
 #include "update_rule.h"
+
+// for more documentation see layer.h
+
 namespace nn {
 class BatchnormLayer : public Layer {
  public:
+  /// \param batch_size The number of input/output samples
+  /// \param layer_size The number of inputs/outputs per sample
+  /// \param alpha Exponential average weight
   BatchnormLayer(int batch_size, int layer_size, float alpha = 0.1f);
   virtual ~BatchnormLayer();
 

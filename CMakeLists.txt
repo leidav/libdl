@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.9)
 project(libdl VERSION 0.1
-		DESCRIPTION "Deeplearning Library"
+	    DESCRIPTION "Small Deep Learning Library"
         LANGUAGES CXX)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -23,6 +23,14 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 		endif()
 endif()
 
+find_package(Doxygen OPTIONAL_COMPONENTS dot mscgen dia)
+
+if(DOXYGEN_FOUND)
+	set(DOXYGEN_OUTPUT_DIRECTORY doc)
+	doxygen_add_docs(doxygen
+		"${PROJECT_SOURCE_DIR}/src/"
+		COMMENT "Generate documentation")
+endif()
 
 find_package(OpenMP REQUIRED)
 
@@ -41,5 +49,3 @@ add_subdirectory(samples/python/digits)
 add_subdirectory(samples/python/artifacts)
 
 add_subdirectory(tests)
-
-

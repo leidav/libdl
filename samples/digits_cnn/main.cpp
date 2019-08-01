@@ -72,12 +72,12 @@ int main(int argc, char* argv[]) {
   int output_width;
   int output_height;
 
-  nn::utils::convolution_helper::imageoutputSize(
+  nn::utils::convolution_helper::convolutionOutputSize(
       output_width, output_height, input_width, input_height, 5, 0, 1);
 
   net.addHiddenLayer(std::make_unique<nn::ConvolutionLayer>(
-      input_width, input_height, 1, output_width, output_height, 6, 5,
-      mini_batch_size, 0, 1, l2_regularization));
+      input_width, input_height, 1, 6, 5, mini_batch_size, 0, 1,
+      l2_regularization));
   input_width = output_width;
   input_height = output_height;
   net.addHiddenLayer(std::make_unique<nn::BatchnormLayer>(
@@ -85,20 +85,19 @@ int main(int argc, char* argv[]) {
   net.addHiddenLayer(
       std::make_unique<nn::ReLULayer>(input_width * input_height * 6));
 
-  nn::utils::convolution_helper::imageoutputSize(
+  nn::utils::convolution_helper::convolutionOutputSize(
       output_width, output_height, input_width, input_height, 2, 0, 2);
   net.addHiddenLayer(std::make_unique<nn::MaxPoolingLayer>(
-      input_width, input_height, 6, output_width, output_height, 2,
-      mini_batch_size));
+      input_width, input_height, 6, 2, mini_batch_size));
 
   input_width = output_width;
   input_height = output_height;
 
-  nn::utils::convolution_helper::imageoutputSize(
+  nn::utils::convolution_helper::convolutionOutputSize(
       output_width, output_height, input_width, input_height, 5, 0, 1);
   net.addHiddenLayer(std::make_unique<nn::ConvolutionLayer>(
-      input_width, input_height, 6, output_width, output_height, 16, 5,
-      mini_batch_size, 0, 1, l2_regularization));
+      input_width, input_height, 6, 16, 5, mini_batch_size, 0, 1,
+      l2_regularization));
   input_width = output_width;
   input_height = output_height;
   net.addHiddenLayer(std::make_unique<nn::BatchnormLayer>(
@@ -106,11 +105,10 @@ int main(int argc, char* argv[]) {
   net.addHiddenLayer(
       std::make_unique<nn::ReLULayer>(input_width * input_height * 16));
 
-  nn::utils::convolution_helper::imageoutputSize(
+  nn::utils::convolution_helper::convolutionOutputSize(
       output_width, output_height, input_width, input_height, 2, 0, 2);
   net.addHiddenLayer(std::make_unique<nn::MaxPoolingLayer>(
-      input_width, input_height, 16, output_width, output_height, 2,
-      mini_batch_size));
+      input_width, input_height, 16, 2, mini_batch_size));
   input_width = output_width;
   input_height = output_height;
 
@@ -192,7 +190,7 @@ int main(int argc, char* argv[]) {
 		break;
 	}
   }
-  printf("show 10 random test images their value\n");
+  printf("show result of images and their value\n");
   std::uniform_int_distribution<uint32_t> test_distribution(0, test_size - 1);
   for (int j = 0; j < mini_batch_size; j++) {
 	int index = test_distribution(mersenne_twister);

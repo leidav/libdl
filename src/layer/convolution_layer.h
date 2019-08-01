@@ -4,15 +4,26 @@
 #include "layer.h"
 #include "update_rule.h"
 
+// for more documentation see layer.h
+
 namespace nn {
 class ConvolutionLayer : public Layer {
  public:
   using WeightMatrix =
 	  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
+  /// \param input_image_width The with of the input image
+  /// \param imput_image_height The height of the input image
+  /// \param input_image_depth The number of channels of the input image
+  /// \param output_image_depth The number of channels of the output image
+  /// \param batch_size The number of input/output images
+  /// \param kernel_size The size of the convolution kernel
+  /// \param padding The number of pixels the input image is extended per side
+  /// \param stride The number of pixels the kernel is moved
+  /// \param regularization_factor Small factor for the penalty applied to the
+  /// filter kernel to prevent overfitting
   ConvolutionLayer(int input_image_width, int imput_image_height,
-                   int input_image_depth, int output_image_width,
-                   int output_image_height, int output_image_depth,
+                   int input_image_depth, int output_image_depth,
                    int kernel_size, int batch_size, int padding, int stride,
                    float regularization_factor = 1e-6f);
   virtual ~ConvolutionLayer();

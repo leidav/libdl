@@ -3,9 +3,12 @@
 
 #include "layer.h"
 
+// for more documentation see layer.h
+
 namespace nn {
 class ReLULayer : public Layer {
  public:
+  /// \param layer_size The number of inputs/outputs per sample
   ReLULayer(int layer_size);
   virtual ~ReLULayer();
 

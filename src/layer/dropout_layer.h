@@ -3,9 +3,13 @@
 
 #include "layer.h"
 
+// for more documentation see layer.h
+
 namespace nn {
 class DropOutLayer : public Layer {
  public:
+  /// \param batch_size The number of input/output samples
+  /// \param layer_size The number of inputs/outputs per sample
   DropOutLayer(int batch_size, int layer_size);
   virtual ~DropOutLayer();
 

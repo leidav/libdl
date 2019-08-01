@@ -4,8 +4,6 @@ target_sources(dl PUBLIC
 						"${CMAKE_CURRENT_SOURCE_DIR}/neural_network.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/param_saver.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/param_saver.cpp"
-						#"${CMAKE_CURRENT_SOURCE_DIR}/solver.h"
-						#"${CMAKE_CURRENT_SOURCE_DIR}/solver.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/update_rule.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/utils/convolution_helper/convolution_helper.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/utils/convolution_helper/convolution_helper.cpp"
@@ -31,8 +29,6 @@ target_sources(dl PUBLIC
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/relu_layer.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/leaky_relu_layer.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/leaky_relu_layer.cpp"
-						"${CMAKE_CURRENT_SOURCE_DIR}/layer/p_relu_layer.h"
-						"${CMAKE_CURRENT_SOURCE_DIR}/layer/p_relu_layer.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/tanh_layer.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/tanh_layer.cpp"
 						"${CMAKE_CURRENT_SOURCE_DIR}/layer/sigmoid_layer.h"
@@ -53,4 +49,5 @@ check_ipo_supported(RESULT result OUTPUT output)
 if(result)
   set_property(TARGET dl PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 endif()
+
 

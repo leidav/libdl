@@ -3,9 +3,12 @@
 
 #include "layer.h"
 
+// for more documentation see layer.h
+
 namespace nn {
 class TanhLayer : public Layer {
  public:
+  /// \param layer_size The number of inputs/outputs per sample
   TanhLayer(int layer_size);
   virtual ~TanhLayer();
 

@@ -3,12 +3,18 @@
 
 #include "layer.h"
 
+// for more documentation see layer.h
+
 namespace nn {
 class AveragePoolingLayer : public Layer {
  public:
+  /// \param input_image_width The with of the input image
+  /// \param imput_image_height The height of the input image
+  /// \param input_image_depth The number of channels of the input image
+  /// \param kernel_size The size of the convolution kernel
+  /// \param batch_size The number of input/output images
   AveragePoolingLayer(int input_image_width, int imput_image_height,
-                      int input_image_depth, int output_image_width,
-                      int output_image_height, int kernel_size, int batch_size);
+                      int input_image_depth, int kernel_size, int batch_size);
   virtual ~AveragePoolingLayer();
 
   void forward(ArrayRef y, const ConstArrayRef& x, bool train) final;

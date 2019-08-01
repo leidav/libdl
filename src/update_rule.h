@@ -4,6 +4,8 @@
 #include <cmath>
 #include "layer/layer.h"
 
+/// \file Implementation of various gradient descent update rules.
+
 namespace nn {
 
 template <typename T>
@@ -63,6 +65,7 @@ class AdamUpdate<float> {
   AdamUpdate() : gradient_average(0), squared_gradient_average(0) {}
   void update(float &param, float gradient, float learning_rate) {
 	t++;
+	// https://arxiv.org/pdf/1412.6980.pdf page 2
 	gradient_average = k_beta1 * gradient_average + (1 - k_beta1) * gradient;
 	squared_gradient_average = k_beta2 * squared_gradient_average +
 	                           (1 - k_beta2) * (gradient * gradient);

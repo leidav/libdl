@@ -7,18 +7,30 @@
 namespace nn {
 
 MaxPoolingLayer::MaxPoolingLayer(int input_image_width, int input_image_height,
-                                 int input_image_depth, int output_image_width,
-                                 int output_image_height, int kernel_size,
+                                 int input_image_depth, int kernel_size,
                                  int batch_size)
     : Layer(input_image_width * input_image_height * input_image_depth,
-            output_image_width * output_image_height * input_image_depth),
+            utils::convolution_helper::convolutionOutputWidth(
+                input_image_width, input_image_height, kernel_size, 0,
+                kernel_size) *
+                utils::convolution_helper::convolutionOutputHeight(
+                    input_image_width, input_image_height, kernel_size, 0,
+                    kernel_size) *
+                input_image_depth),
       m_input_width(input_image_width),
       m_input_height(input_image_height),
       m_input_depth(input_image_depth),
       m_kernel_size(kernel_size),
       m_batch_size(batch_size),
-      m_indizes(m_batch_size * output_image_width * output_image_height *
-                input_image_depth) {}
+      m_indizes(static_cast<size_t>(
+          m_batch_size *
+          utils::convolution_helper::convolutionOutputWidth(
+              input_image_width, input_image_height, kernel_size, 0,
+              kernel_size) *
+          utils::convolution_helper::convolutionOutputHeight(
+              input_image_width, input_image_height, kernel_size, 0,
+              kernel_size) *
+          input_image_depth)) {}
 MaxPoolingLayer::~MaxPoolingLayer() {}
 
 void MaxPoolingLayer::forward(ArrayRef y, const ConstArrayRef &x, bool train) {
