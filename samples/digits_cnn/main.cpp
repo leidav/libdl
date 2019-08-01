@@ -7,6 +7,7 @@
 #include <layer/relu_layer.h>
 #include <layer/softmax_layer.h>
 #include <neural_network.h>
+#include <spdlog/fmt/fmt.h>
 #include <utils/convolution_helper/convolution_helper.h>
 #include <utils/mnist/mnist_loader.h>
 
@@ -130,7 +131,7 @@ int main(int argc, char* argv[]) {
 	indices[i] = i;
   }
 
-  printf("Start Training...\n");
+  fmt::print("Start Training...\n");
   fflush(stdout);
 
   std::random_device seed_generator;
@@ -182,15 +183,16 @@ int main(int argc, char* argv[]) {
 	// if (epoch % 10 == 0) {
 	float accuracy =
 	    (static_cast<float>(accuracy_counter) / test_size) * 100.0f;
-	printf("epoch:%d, accuracy:%f%%, train loss:%f, test loss:%f\n", epoch,
-	       accuracy, train_loss, test_loss);
+	fmt::print("epoch:{}, accuracy:{}%, train loss:{}, test loss:{}\n", epoch,
+	           accuracy, train_loss, test_loss);
 	fflush(stdout);
 	//}
 	if (accuracy >= 97.0f) {
 		break;
 	}
   }
-  printf("show result of images and their value\n");
+  fmt::print("show result of images and their value\n");
+  fflush(stdout);
   std::uniform_int_distribution<uint32_t> test_distribution(0, test_size - 1);
   for (int j = 0; j < mini_batch_size; j++) {
 	int index = test_distribution(mersenne_twister);
@@ -203,7 +205,7 @@ int main(int argc, char* argv[]) {
 	int max;
 	net.result().row(i).maxCoeff(&max);
 	int ground_truth = mini_batch_label(i, 0);
-	printf("result: %d, ground truth: %d\n", max, ground_truth);
+	fmt::print("result: {}, ground truth: {}\n", max, ground_truth);
 	fflush(stdout);
   }
 
