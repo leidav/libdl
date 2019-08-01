@@ -5,7 +5,8 @@ namespace nn {
 namespace utils {
 namespace convolution_helper {
 
-///\file helper functions useful for convolution layers and their usage
+///\file
+/// \brief helper functions useful for convolution layers and their usage
 
 /// \brief Get the number of rows of the temporary im2row matrix
 int im2rowOutputRows(int image_width, int image_height, int image_depth,

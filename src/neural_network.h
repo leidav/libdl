@@ -9,7 +9,7 @@
 
 namespace nn {
 
-/// \brief implementation of the a neural network
+/// \brief implementation of a neural network
 class NeuralNetwork {
  public:
   ///\param batch_size The number of samples/images used at once to train the

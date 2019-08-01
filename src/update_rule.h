@@ -4,10 +4,12 @@
 #include <cmath>
 #include "layer/layer.h"
 
-/// \file Implementation of various gradient descent update rules.
+/// \file
+/// \brief Implementation of various gradient descent update rules.
 
 namespace nn {
 
+/// \brief Simple stochastic gradient descent update for array parameters
 template <typename T>
 class SGDUpdate {
  public:
@@ -16,6 +18,7 @@ class SGDUpdate {
 	param += gradient * learning_rate;
   }
 };
+/// \brief Simple stochastic gradient descent update for float parameters
 template <>
 class SGDUpdate<float> {
  public:
@@ -24,6 +27,8 @@ class SGDUpdate<float> {
   }
 };
 
+/// \brief Adam update for array parameters
+/// \see https://arxiv.org/pdf/1412.6980.pdf page 2
 template <typename T>
 class AdamUpdate {
  public:
@@ -59,6 +64,8 @@ class AdamUpdate {
   T squared_gradient_average;
 };
 
+/// \brief Adam update for float parameters
+/// \see https://arxiv.org/pdf/1412.6980.pdf page 2
 template <>
 class AdamUpdate<float> {
  public:

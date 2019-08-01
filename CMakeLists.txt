@@ -27,8 +27,10 @@ find_package(Doxygen OPTIONAL_COMPONENTS dot mscgen dia)
 
 if(DOXYGEN_FOUND)
 	set(DOXYGEN_OUTPUT_DIRECTORY doc)
+	set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "README.md")
 	doxygen_add_docs(doxygen
 		"${PROJECT_SOURCE_DIR}/src/"
+		"${PROJECT_SOURCE_DIR}/README.md"
 		COMMENT "Generate documentation")
 endif()
 

@@ -1,5 +1,6 @@
 #include "neural_network_bindings.h"
 #include <neural_network.h>
+#include <param_saver.h>
 
 using namespace nn;
 namespace py = pybind11;
@@ -21,4 +22,26 @@ void createNeuralNetworkBinding(py::module &m) {
       .def("loadBestParameters", &NeuralNetwork::loadBestParameters)
       .def("loadLastParameters", &NeuralNetwork::loadLastParameters)
       .def("loadParameters", &NeuralNetwork::loadParameters);
+
+  py::class_<ParamWriter> param_writer(m, "ParamWriter");
+  param_writer.def(py::init<>())
+      .def("open", &ParamWriter::open)
+      .def("close", &ParamWriter::close)
+      .def("startFile", &ParamWriter::startFile)
+      .def("startEpoch", &ParamWriter::startEpoch)
+      .def("startLayer", &ParamWriter::startLayer)
+      .def("addParam", &ParamWriter::addParam);
+
+  py::class_<ParamReader> param_reader(m, "ParamReader");
+  param_reader.def(py::init<>())
+      .def("open", &ParamReader::open)
+      .def("close", &ParamReader::close)
+      .def("epochCount", &ParamReader::epochCount)
+      .def("setLoadingEpoch", &ParamReader::setLoadingEpoch)
+      .def("readLayerInfo", &ParamReader::readLayerInfo)
+      .def("readParam", &ParamReader::readParam)
+      .def("epochLosses", &ParamReader::epochLosses)
+      .def("bestTrainEpoch", &ParamReader::bestTrainEpoch)
+      .def("bestTestEpoch", &ParamReader::bestTestEpoch)
+      .def("epochOffset", &ParamReader::epochOffset);
 }
