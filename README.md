@@ -1,7 +1,7 @@
 libdl
 ====
 
-A Small deep learning library in c++ with python bindings
+A Small Deep Learning Library in c++ with Python Bindings
 
 ## Build Instructions
 
@@ -70,7 +70,7 @@ Exampe:
 
 ### MNIST digit recognition
 
-There are 3 variants. The first uses fully connected layer.
+There are 3 variants. The first variant uses fully connected layers.
 The second uses fully connected layers + convolution layers.
 The third one is implemented in python and uses fully connected layers.
 The c++ variants only output the result and the ground truth label.
